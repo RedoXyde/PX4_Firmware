@@ -1,0 +1,12 @@
+{
+    "board_id": 98,
+    "magic": "Sparky2",
+    "description": "Firmware for the Sparky2 board",
+    "image": "",
+    "build_time": 0,
+    "summary": "Sparky2",
+    "version": "0.0.1",
+    "image_size": 0,
+    "git_identity": "",
+    "board_revision": 0
+}
