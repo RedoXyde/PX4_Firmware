@@ -169,9 +169,9 @@
 #define BOARD_LED3        2
 #define BOARD_NLEDS       3
 
-#define BOARD_LED_BLUE    BOARD_LED1
-#define BOARD_LED_RED     BOARD_LED2
-#define BOARD_LED_GREEN   BOARD_LED3
+#define BOARD_LED_AMBER    BOARD_LED1
+#define BOARD_LED_BLUE     BOARD_LED2
+#define BOARD_LED_GREEN    BOARD_LED3
 
 /* LED bits for use with stm32_setleds() */
 
@@ -200,9 +200,11 @@
  *
  * Note that UART5 has no optional pinout, so it is not listed here.
  */
+/* Sparky2, Main Port */
 #define GPIO_USART1_RX	GPIO_USART1_RX_2
 #define GPIO_USART1_TX	GPIO_USART1_TX_2
 
+/*
 #define GPIO_USART2_RX	GPIO_USART2_RX_1
 #define GPIO_USART2_TX	GPIO_USART2_TX_1
 #define GPIO_USART2_RTS	GPIO_USART2_RTS_1
@@ -210,17 +212,19 @@
 
 #define GPIO_USART6_RX	GPIO_USART6_RX_1
 #define GPIO_USART6_TX	GPIO_USART6_TX_1
+*/
 
 /* UART DMA configuration for USART1/6 */
+/*
 #define DMAMAP_USART1_RX DMAMAP_USART1_RX_2
 #define DMAMAP_USART6_RX DMAMAP_USART6_RX_2
+*/
 
 /*
  * CAN
  *
- * CAN2 is routed to the expansion connector.
+ * CAN2 is routed to CONN6
  */
-
 #define GPIO_CAN2_RX	GPIO_CAN2_RX_1
 #define GPIO_CAN2_TX	GPIO_CAN2_TX_1
 
@@ -231,25 +235,30 @@
  * reset the bus to clear stuck slaves.  They match the pin configuration,
  * but are normally-high GPIOs.
  */
+/* I2C1 is connected to the Pressure Sensor (MS5611), uses PB8,PB9 */
 #define GPIO_I2C1_SCL		GPIO_I2C1_SCL_2
 #define GPIO_I2C1_SDA		GPIO_I2C1_SDA_2
 #define GPIO_I2C1_SCL_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN8)
 #define GPIO_I2C1_SDA_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN9)
 
+/* I2C2 is connected to CONN3, uses PB10,PB11 */
 #define GPIO_I2C2_SCL		GPIO_I2C2_SCL_1
 #define GPIO_I2C2_SDA		GPIO_I2C2_SDA_1
 #define GPIO_I2C2_SCL_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN10)
 #define GPIO_I2C2_SDA_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN11)
 
+/* I2C3 is not used */
+/*
 #define GPIO_I2C3_SCL		GPIO_I2C3_SCL_1
 #define GPIO_I2C3_SDA		GPIO_I2C3_SDA_1
 #define GPIO_I2C3_SCL_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTA|GPIO_PIN8)
 #define GPIO_I2C3_SDA_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTC|GPIO_PIN9)
+*/
 
 /*
  * SPI
  *
- * There are sensors on SPI1, and SPI3 is connected to the microSD slot.
+ * There is the MPU9250 on SPI1, and SPI3 is connected to the Flash and Radio
  */
 #define GPIO_SPI1_MISO	(GPIO_SPI1_MISO_1|GPIO_SPEED_50MHz)
 #define GPIO_SPI1_MOSI	(GPIO_SPI1_MOSI_1|GPIO_SPEED_50MHz)
@@ -258,11 +267,12 @@
 #define GPIO_SPI3_MISO	(GPIO_SPI3_MISO_2|GPIO_SPEED_50MHz)
 #define GPIO_SPI3_MOSI	(GPIO_SPI3_MOSI_1|GPIO_SPEED_50MHz)
 #define GPIO_SPI3_SCK	(GPIO_SPI3_SCK_2|GPIO_SPEED_50MHz)
-#define GPIO_SPI3_NSS	(GPIO_SPI3_NSS_2|GPIO_SPEED_50MHz)
+//#define GPIO_SPI3_NSS	(GPIO_SPI3_NSS_2|GPIO_SPEED_50MHz)
 
-/* SPI DMA configuration for SPI3 (microSD) */
+/* SPI DMA configuration for SPI3 (Flash and Radio) */
 #define DMACHAN_SPI3_RX DMAMAP_SPI3_RX_1
 #define DMACHAN_SPI3_TX DMAMAP_SPI3_TX_2
+/* SPI DMA configuration for SPI1 (MPU9250) */
 /* XXX since we allocate the HP work stack from CCM RAM on normal system startup,
    SPI1 will never run in DMA mode - so we can just give it a random config here.
    What we really need to do is to make DMA configurable per channel, and always
