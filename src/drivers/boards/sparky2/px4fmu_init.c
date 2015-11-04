@@ -159,7 +159,6 @@ __EXPORT int matherr(struct exception *e)
 
 __EXPORT int nsh_archinitialize(void)
 {
-	int result;
 
 	/* configure always-on ADC pins */
 	stm32_configgpio(GPIO_ADC1_IN10);
@@ -211,8 +210,6 @@ __EXPORT int nsh_archinitialize(void)
 	SPI_SETFREQUENCY(spi1, 10000000);
 	SPI_SETBITS(spi1, 8);
 	SPI_SETMODE(spi1, SPIDEV_MODE3);
-	SPI_SELECT(spi1, PX4_SPIDEV_GYRO, false);
-	SPI_SELECT(spi1, PX4_SPIDEV_ACCEL, false);
 	SPI_SELECT(spi1, PX4_SPIDEV_MPU, false);
 	up_udelay(20);
 
@@ -249,14 +246,13 @@ __EXPORT int nsh_archinitialize(void)
 		return -ENODEV;
 	}
 
-	/* Now bind the SPI interface to the MMCSD driver */
-	result = mmcsd_spislotinitialize(CONFIG_NSH_MMCSDMINOR, CONFIG_NSH_MMCSDSLOTNO, spi3);
-
-	if (result != OK) {
-		message("[boot] FAILED to bind SPI port 3 to the MMCSD driver\n");
-		up_ledon(LED_AMBER);
-		return -ENODEV;
-	}
+  /* Default SPI1 to 1MHz and de-assert the known chip selects. */
+	SPI_SETFREQUENCY(spi3, 10000000);
+	SPI_SETBITS(spi3, 8);
+	SPI_SETMODE(spi3, SPIDEV_MODE3);
+	SPI_SELECT(spi3, PX4_SPIDEV_FLASH, false);
+  SPI_SELECT(spi3, PX4_SPIDEV_RADIO, false);
+	up_udelay(20);
 
 	return OK;
 }

@@ -61,13 +61,19 @@ __EXPORT const struct pwm_servo_timer pwm_timers[PWM_SERVO_MAX_TIMERS] = {
 
 __EXPORT const struct pwm_servo_channel pwm_channels[PWM_SERVO_MAX_CHANNELS] = {
 	{
-		.gpio = GPIO_TIM2_CH1OUT,
+		.gpio = GPIO_TIM3_CH3OUT,
 		.timer_index = 0,
-		.timer_channel = 1,
+		.timer_channel = 3,
 		.default_value = 1000,
 	},
 	{
-		.gpio = GPIO_TIM2_CH2OUT,
+		.gpio = GPIO_TIM3_CH4OUT,
+		.timer_index = 0,
+		.timer_channel = 4,
+		.default_value = 1000,
+	},
+	{
+		.gpio = GPIO_TIM9_CH2OUT,
 		.timer_index = 0,
 		.timer_channel = 2,
 		.default_value = 1000,
@@ -79,9 +85,15 @@ __EXPORT const struct pwm_servo_channel pwm_channels[PWM_SERVO_MAX_CHANNELS] = {
 		.default_value = 1000,
 	},
 	{
-		.gpio = GPIO_TIM2_CH4OUT,
+		.gpio = GPIO_TIM5_CH2OUT,
 		.timer_index = 0,
-		.timer_channel = 4,
+		.timer_channel = 2,
 		.default_value = 1000,
-	}
+	},
+	{
+		.gpio = GPIO_TIM5_CH1OUT,
+		.timer_index = 0,
+		.timer_channel = 1,
+		.default_value = 1000,
+	},
 };
