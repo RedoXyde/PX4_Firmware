@@ -41,7 +41,7 @@
  * based on the mpu6000 driver
  */
 
-#include <px4_config.h>
+#include <nuttx/config.h>
 
 #include <sys/types.h>
 #include <stdint.h>
@@ -241,7 +241,7 @@ private:
 	struct hrt_call		_call;
 	unsigned		_call_interval;
 
-	ringbuffer::RingBuffer	*_accel_reports;
+	RingBuffer	*_accel_reports;
 
 	struct accel_scale	_accel_scale;
 	float			_accel_range_scale;
@@ -250,7 +250,7 @@ private:
 	int			_accel_orb_class_instance;
 	int			_accel_class_instance;
 
-	ringbuffer::RingBuffer	*_gyro_reports;
+	RingBuffer	*_gyro_reports;
 
 	struct gyro_scale	_gyro_scale;
 	float			_gyro_range_scale;
@@ -508,7 +508,7 @@ MPU9250::MPU9250(int bus, const char *path_accel, const char *path_gyro, spi_dev
 	_accel_scale{},
 	_accel_range_scale(0.0f),
 	_accel_range_m_s2(0.0f),
-	_accel_topic(nullptr),
+	_accel_topic(-1),
 	_accel_orb_class_instance(-1),
 	_accel_class_instance(-1),
 	_gyro_reports(nullptr),
@@ -611,18 +611,18 @@ MPU9250::init()
 
 	/* if probe/setup failed, bail now */
 	if (ret != OK) {
-		DEVICE_DEBUG("SPI setup failed");
+		debug("SPI setup failed");
 		return ret;
 	}
 
 	/* allocate basic report buffers */
-	_accel_reports = new ringbuffer::RingBuffer(2, sizeof(accel_report));
+	_accel_reports = new RingBuffer(2, sizeof(accel_report));
 
 	if (_accel_reports == nullptr) {
 		goto out;
 	}
 
-	_gyro_reports = new ringbuffer::RingBuffer(2, sizeof(gyro_report));
+	_gyro_reports = new RingBuffer(2, sizeof(gyro_report));
 
 	if (_gyro_reports == nullptr) {
 		goto out;
@@ -653,7 +653,7 @@ MPU9250::init()
 
 	/* if probe/setup failed, bail now */
 	if (ret != OK) {
-		DEVICE_DEBUG("gyro init failed");
+		debug("gyro init failed");
 		return ret;
 	}
 
@@ -669,7 +669,7 @@ MPU9250::init()
 	_accel_topic = orb_advertise_multi(ORB_ID(sensor_accel), &arp,
 					   &_accel_orb_class_instance, (is_external()) ? ORB_PRIO_MAX : ORB_PRIO_HIGH);
 
-	if (_accel_topic == nullptr) {
+	if (_accel_topic == -1) {
 		warnx("ADVERT FAIL");
 	}
 
@@ -681,7 +681,7 @@ MPU9250::init()
 	_gyro->_gyro_topic = orb_advertise_multi(ORB_ID(sensor_gyro), &grp,
 			     &_gyro->_gyro_orb_class_instance, (is_external()) ? ORB_PRIO_MAX : ORB_PRIO_HIGH);
 
-	if (_gyro->_gyro_topic == nullptr) {
+	if (_gyro->_gyro_topic == -1) {
 		warnx("ADVERT FAIL");
 	}
 
@@ -768,7 +768,7 @@ MPU9250::probe()
 		return OK;
 	}
 
-	DEVICE_DEBUG("unexpected whoami 0x%02x", _whoami);
+	debug("unexpected whoami 0x%02x", _whoami);
 	return -EIO;
 }
 
@@ -1783,7 +1783,7 @@ MPU9250::print_registers()
 MPU9250_gyro::MPU9250_gyro(MPU9250 *parent, const char *path) :
 	CDev("MPU9250_gyro", path),
 	_parent(parent),
-	_gyro_topic(nullptr),
+	_gyro_topic(-1),
 	_gyro_orb_class_instance(-1),
 	_gyro_class_instance(-1)
 {
@@ -1806,7 +1806,7 @@ MPU9250_gyro::init()
 
 	/* if probe/setup failed, bail now */
 	if (ret != OK) {
-		DEVICE_DEBUG("gyro init failed");
+		debug("gyro init failed");
 		return ret;
 	}
 
