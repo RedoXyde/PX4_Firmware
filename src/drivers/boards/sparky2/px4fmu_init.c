@@ -55,7 +55,6 @@
 #include <nuttx/arch.h>
 #include <nuttx/spi.h>
 #include <nuttx/i2c.h>
-#include <nuttx/mmcsd.h>
 #include <nuttx/analog/adc.h>
 
 #include "stm32.h"
@@ -236,7 +235,7 @@ __EXPORT int nsh_archinitialize(void)
 		stm32_configgpio(GPIO_ADC1_IN13);	// jumperable to MPU6000 DRDY on some boards
 	#endif
 
-	/* Get the SPI port for the microSD slot */
+	/* Get the SPI port for the Flash and Radio */
 
 	spi3 = up_spiinitialize(3);
 
@@ -250,7 +249,7 @@ __EXPORT int nsh_archinitialize(void)
 	SPI_SETFREQUENCY(spi3, 10000000);
 	SPI_SETBITS(spi3, 8);
 	SPI_SETMODE(spi3, SPIDEV_MODE3);
-	SPI_SELECT(spi3, PX4_SPIDEV_FLASH, false);
+	SPI_SELECT(spi3, SPIDEV_FLASH, false);
   SPI_SELECT(spi3, PX4_SPIDEV_RADIO, false);
 	up_udelay(20);
 

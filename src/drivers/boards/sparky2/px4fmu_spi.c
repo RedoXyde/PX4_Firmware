@@ -119,7 +119,7 @@ __EXPORT void stm32_spi3select(FAR struct spi_dev_s *dev, enum spi_dev_e devid, 
 {
 	/* there can only be one device on this bus, so always select it */
   switch (devid) {
-	case PX4_SPIDEV_FLASH:
+	case SPIDEV_FLASH:
 		/* Making sure the other peripherals are not selected */
 		stm32_gpiowrite(GPIO_SPI_CS_FLASH, !selected);
 		stm32_gpiowrite(GPIO_SPI_CS_RADIO, 1);
@@ -137,7 +137,6 @@ __EXPORT void stm32_spi3select(FAR struct spi_dev_s *dev, enum spi_dev_e devid, 
 
 __EXPORT uint8_t stm32_spi3status(FAR struct spi_dev_s *dev, enum spi_dev_e devid)
 {
-	/* this is actually bogus, but PX4 has no way to sense the presence of an SD card */
 	return SPI_STATUS_PRESENT;
 }
 
