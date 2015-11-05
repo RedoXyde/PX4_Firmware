@@ -76,8 +76,10 @@ int mtd_main(int argc, char *argv[])
 
 #else
 
-#ifdef CONFIG_MTD_RAMTRON
+#if defined(CONFIG_MTD_RAMTRON)
 static void	ramtron_attach(void);
+#elif defined(CONFIG_MTD_M25P)
+static void m25p_attach(void);
 #else
 
 #ifndef PX4_I2C_BUS_ONBOARD
@@ -92,7 +94,7 @@ static void	mtd_erase(char *partition_names[], unsigned n_partitions);
 static void	mtd_readtest(char *partition_names[], unsigned n_partitions);
 static void	mtd_rwtest(char *partition_names[], unsigned n_partitions);
 static void	mtd_print_info(void);
-static int	mtd_get_geometry(unsigned long *blocksize, unsigned long *erasesize, unsigned long *neraseblocks, 
+static int	mtd_get_geometry(unsigned long *blocksize, unsigned long *erasesize, unsigned long *neraseblocks,
 	unsigned *blkpererase, unsigned *nblocks, unsigned *partsize, unsigned n_partitions);
 
 static bool attached = false;
@@ -109,7 +111,7 @@ mtd_status(void)
 {
 	if (!attached)
 		errx(1, "MTD driver not started");
-    
+
 	mtd_print_info();
 	exit(0);
 }
@@ -165,7 +167,7 @@ struct mtd_dev_s *ramtron_initialize(FAR struct spi_dev_s *dev);
 struct mtd_dev_s *mtd_partition(FAR struct mtd_dev_s *mtd,
                                     off_t firstblock, off_t nblocks);
 
-#ifdef CONFIG_MTD_RAMTRON
+#if defined(CONFIG_MTD_RAMTRON)
 static void
 ramtron_attach(void)
 {
@@ -187,6 +189,50 @@ ramtron_attach(void)
 	/* start the RAMTRON driver, attempt 5 times */
 	for (int i = 0; i < 5; i++) {
 		mtd_dev = ramtron_initialize(spi);
+
+		if (mtd_dev) {
+			/* abort on first valid result */
+			if (i > 0) {
+				warnx("warning: mtd needed %d attempts to attach", i + 1);
+			}
+
+			break;
+		}
+	}
+
+	/* if last attempt is still unsuccessful, abort */
+	if (mtd_dev == NULL)
+		errx(1, "failed to initialize mtd driver");
+
+	int ret = mtd_dev->ioctl(mtd_dev, MTDIOC_SETSPEED, (unsigned long)10*1000*1000);
+	if (ret != OK) {
+		// FIXME: From the previous warnx call, it looked like this should have been an errx instead. Tried
+		// that but setting the bug speed does fail all the time. Which was then exiting and the board would
+		// not run correctly. So changed to warnx.
+		warnx("failed to set bus speed");
+	}
+
+	attached = true;
+}
+#elif defined(CONFIG_MTD_M25P)
+static void
+m25p_attach(void)
+{
+	/* find the right spi, use Sparky2 setting: SPI3 */
+	struct spi_dev_s *spi = up_spiinitialize(3);
+
+	/* this resets the spi bus, set correct bus speed again */
+	SPI_SETFREQUENCY(spi, 10 * 1000 * 1000);
+	SPI_SETBITS(spi, 8);
+	SPI_SETMODE(spi, SPIDEV_MODE0);
+	SPI_SELECT(spi, SPIDEV_FLASH, false);
+
+	if (spi == NULL)
+		errx(1, "failed to locate spi bus");
+
+	/* start the m25p driver, attempt 5 times */
+	for (int i = 0; i < 5; i++) {
+		mtd_dev = m25p_initialize(spi);
 
 		if (mtd_dev) {
 			/* abort on first valid result */
@@ -254,9 +300,11 @@ mtd_start(char *partition_names[], unsigned n_partitions)
 		errx(1, "mtd already mounted");
 
 	if (!attached) {
-		#ifdef CONFIG_ARCH_BOARD_PX4FMU_V1
+		#if defined(CONFIG_ARCH_BOARD_PX4FMU_V1)
 		at24xxx_attach();
-		#else
+		#elif defined(CONFIG_ARCH_BOARD_SPARKY2)
+    m25p_attach();
+    #else
 		ramtron_attach();
 		#endif
 	}
@@ -320,7 +368,7 @@ mtd_start(char *partition_names[], unsigned n_partitions)
 	exit(0);
 }
 
-int mtd_get_geometry(unsigned long *blocksize, unsigned long *erasesize, unsigned long *neraseblocks, 
+int mtd_get_geometry(unsigned long *blocksize, unsigned long *erasesize, unsigned long *neraseblocks,
 	unsigned *blkpererase, unsigned *nblocks, unsigned *partsize, unsigned n_partitions)
 {
 		/* Get the geometry of the FLASH device */
@@ -469,13 +517,13 @@ mtd_rwtest(char *partition_names[], unsigned n_partitions)
 		while (read(fd, v, sizeof(v)) == sizeof(v)) {
 			count += sizeof(v);
                         if (lseek(fd, offset, SEEK_SET) != offset) {
-                            errx(1, "seek failed");                            
+                            errx(1, "seek failed");
                         }
                         if (write(fd, v, sizeof(v)) != sizeof(v)) {
                             errx(1, "write failed");
                         }
                         if (lseek(fd, offset, SEEK_SET) != offset) {
-                            errx(1, "seek failed");                            
+                            errx(1, "seek failed");
                         }
                         if (read(fd, v2, sizeof(v2)) != sizeof(v2)) {
                             errx(1, "read failed");
