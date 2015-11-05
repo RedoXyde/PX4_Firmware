@@ -2088,8 +2088,8 @@ Sensors::task_main()
 		if (ret) break;
 		ret = gyro_init();
 		if (ret) break;
-		ret = mag_init();
-		if (ret) break;
+		//~ ret = mag_init();
+		//~ if (ret) break;
 		ret = baro_init();
 		if (ret) break;
 		ret = adc_init();
