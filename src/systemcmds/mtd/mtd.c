@@ -76,8 +76,10 @@ int mtd_main(int argc, char *argv[])
 
 #else
 
-#ifdef CONFIG_MTD_RAMTRON
+#if defined(CONFIG_MTD_RAMTRON)
 static void	ramtron_attach(void);
+#elif defined(CONFIG_MTD_M25P)
+static void m25p_attach(void);
 #else
 
 #ifndef PX4_I2C_BUS_ONBOARD
@@ -219,6 +221,50 @@ ramtron_attach(void)
 
 	attached = true;
 }
+#elif defined(CONFIG_MTD_M25P)
+static void
+m25p_attach(void)
+{
+	/* find the right spi, use Sparky2 setting: SPI3 */
+	struct spi_dev_s *spi = up_spiinitialize(3);
+
+	/* this resets the spi bus, set correct bus speed again */
+	SPI_SETFREQUENCY(spi, 10 * 1000 * 1000);
+	SPI_SETBITS(spi, 8);
+	SPI_SETMODE(spi, SPIDEV_MODE0);
+	SPI_SELECT(spi, SPIDEV_FLASH, false);
+
+	if (spi == NULL)
+		errx(1, "failed to locate spi bus");
+
+	/* start the m25p driver, attempt 5 times */
+	for (int i = 0; i < 5; i++) {
+		mtd_dev = m25p_initialize(spi);
+
+		if (mtd_dev) {
+			/* abort on first valid result */
+			if (i > 0) {
+				warnx("warning: mtd needed %d attempts to attach", i + 1);
+			}
+
+			break;
+		}
+	}
+
+	/* if last attempt is still unsuccessful, abort */
+	if (mtd_dev == NULL)
+		errx(1, "failed to initialize mtd driver");
+
+	int ret = mtd_dev->ioctl(mtd_dev, MTDIOC_SETSPEED, (unsigned long)10*1000*1000);
+	if (ret != OK) {
+		// FIXME: From the previous warnx call, it looked like this should have been an errx instead. Tried
+		// that but setting the bug speed does fail all the time. Which was then exiting and the board would
+		// not run correctly. So changed to warnx.
+		warnx("failed to set bus speed");
+	}
+
+	attached = true;
+}
 #else
 
 static void
@@ -266,8 +312,10 @@ mtd_start(char *partition_names[], unsigned n_partitions)
 	}
 
 	if (!attached) {
-#ifdef CONFIG_MTD_RAMTRON
+#if defined(CONFIG_MTD_RAMTRON)
 		ramtron_attach();
+#elif defined(CONFIG_ARCH_BOARD_SPARKY2)
+		m25p_attach();
 #else
 		at24xxx_attach();
 #endif

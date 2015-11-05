@@ -100,7 +100,8 @@ __BEGIN_DECLS
  * Use these in place of the spi_dev_e enumeration to
  * select a specific SPI device on SPI3
  */
-#define PX4_SPIDEV_FLASH	1
+#define SPIDEV_FLASH	1
+
 #define PX4_SPIDEV_RADIO	2
 #define PX4_SPIDEV_MPU		3
 
