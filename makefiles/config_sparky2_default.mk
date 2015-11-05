@@ -6,7 +6,7 @@
 # Use the configuration's ROMFS.
 #
 ROMFS_ROOT	 = $(PX4_BASE)/ROMFS/px4fmu_common
-ROMFS_OPTIONAL_FILES = $(PX4_BASE)/Images/sparky2_default.bin
+#ROMFS_OPTIONAL_FILES = $(PX4_BASE)/Images/sparky2_default.bin
 
 #
 # Board support modules
