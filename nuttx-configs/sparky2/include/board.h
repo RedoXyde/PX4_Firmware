@@ -198,34 +198,44 @@
 /*
  * UARTs.
  *
- * Note that UART5 has no optional pinout, so it is not listed here.
  */
-/* Sparky2, Main Port */
-#define GPIO_USART1_RX	GPIO_USART1_RX_2
-#define GPIO_USART1_TX	GPIO_USART1_TX_2
+/* USART1: Sparky2, Main Port: RX (PA10), TX (PA9) */
+#define GPIO_USART1_RX	GPIO_USART1_RX_1
+#define GPIO_USART1_TX	GPIO_USART1_TX_1
 
-
+/* USART2: Sparky2, PWM/Servo Port: RX (PA3), TX (PA2) */
 #define GPIO_USART2_RX	GPIO_USART2_RX_1
 #define GPIO_USART2_TX	GPIO_USART2_TX_1
+/* USART2 Flow Control: Sparky2, PWM/Servo Port, CTS (PA0), RTS (PA1) */
 /*
-#define GPIO_USART2_RTS	GPIO_USART2_RTS_1
+#define GPIO_USART2_RTS	GPIO_USART2_CTS_1
 #define GPIO_USART2_CTS	GPIO_USART2_CTS_1
-
-#define GPIO_USART6_RX	GPIO_USART6_RX_1
-#define GPIO_USART6_TX	GPIO_USART6_TX_1
 */
+
+/* USART3: Sparky2, Flexi Port: RX (PB11), TX (PB10) */
+#define GPIO_USART3_RX	GPIO_USART3_RX_1
+#define GPIO_USART3_TX	GPIO_USART3_TX_1
+
+/* USART4: Sparky2, PWM/Servo Port: RX (PA1), TX (PA0) */
+#define GPIO_USART4_RX	GPIO_USART4_RX_1
+#define GPIO_USART4_TX	GPIO_USART4_TX_1
+
+/* USART5: Disable (conflicts with SPI3 bus) */
+
+/* USART6: Sparky2, Recvr Port: RX (PC7) TX (Disabled) */
+#define GPIO_USART6_RX	GPIO_USART6_RX_1
+/* #define GPIO_USART6_TX	GPIO_USART6_TX_1
 
 /* UART DMA configuration for USART1/6 */
-#define DMAMAP_USART1_RX DMAMAP_USART1_RX_2
-/*
-#define DMAMAP_USART6_RX DMAMAP_USART6_RX_2
-*/
+#define DMAMAP_USART1_RX DMAMAP_USART1_RX_2 /* DMA2, STREAM5, CHANNEL4 */
+                            /* USART1_TX is on DMA2, STREAM7, CHANNEL4 */
+#define DMAMAP_USART6_RX DMAMAP_USART6_RX_2 /* DMA2, STREAM2, CHANNEL5 */
 
 /*
  * CAN
  *
- * CAN2 is routed to CONN6
  */
+/* CAN2, Sparky2, CAN Port, RX (PB12), TX(PB13) */
 #define GPIO_CAN2_RX	GPIO_CAN2_RX_1
 #define GPIO_CAN2_TX	GPIO_CAN2_TX_1
 
@@ -236,50 +246,48 @@
  * reset the bus to clear stuck slaves.  They match the pin configuration,
  * but are normally-high GPIOs.
  */
-/* I2C1 is connected to the Pressure Sensor (MS5611), uses PB8,PB9 */
+/* I2C1, Sparky2, Pressure Sensor (MS5611), SCL (PB8), SDA(PB9) */
 #define GPIO_I2C1_SCL		GPIO_I2C1_SCL_2
 #define GPIO_I2C1_SDA		GPIO_I2C1_SDA_2
 #define GPIO_I2C1_SCL_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN8)
 #define GPIO_I2C1_SDA_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN9)
 
-/* I2C2 is connected to CONN3, uses PB10,PB11 */
+/* I2C2, is connected to FlexiPort, SCL (PB10), SDA(PB11)
+ *  / ! \ Same as USART3
+ */
 #define GPIO_I2C2_SCL		GPIO_I2C2_SCL_1
 #define GPIO_I2C2_SDA		GPIO_I2C2_SDA_1
 #define GPIO_I2C2_SCL_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN10)
 #define GPIO_I2C2_SDA_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN11)
 
 /* I2C3 is not used */
-/*
-#define GPIO_I2C3_SCL		GPIO_I2C3_SCL_1
-#define GPIO_I2C3_SDA		GPIO_I2C3_SDA_1
-#define GPIO_I2C3_SCL_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTA|GPIO_PIN8)
-#define GPIO_I2C3_SDA_GPIO	(GPIO_OUTPUT|GPIO_OPENDRAIN|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTC|GPIO_PIN9)
-*/
 
 /*
  * SPI
  *
- * There is the MPU9250 on SPI1, and SPI3 is connected to the Flash and Radio
- */
+ /
+/* SPI1, Sparky2, MPU9250, MISO (PA6), MOSI (PA7), SCK (PA5), CS_MPU (PC4) */
 #define GPIO_SPI1_MISO	(GPIO_SPI1_MISO_1|GPIO_SPEED_50MHz)
 #define GPIO_SPI1_MOSI	(GPIO_SPI1_MOSI_1|GPIO_SPEED_50MHz)
-#define GPIO_SPI1_SCK	(GPIO_SPI1_SCK_1|GPIO_SPEED_50MHz)
+#define GPIO_SPI1_SCK   (GPIO_SPI1_SCK_1|GPIO_SPEED_50MHz)
 
+/* SPI3, Sparky2, Flash and Radio, MISO (PC11), MOSI (PC12), SCK (PC10), CS_FLASH (PB3), CS_RADIO (PA15) */
 #define GPIO_SPI3_MISO	(GPIO_SPI3_MISO_2|GPIO_SPEED_50MHz)
-#define GPIO_SPI3_MOSI	(GPIO_SPI3_MOSI_1|GPIO_SPEED_50MHz)
-#define GPIO_SPI3_SCK	(GPIO_SPI3_SCK_2|GPIO_SPEED_50MHz)
-//#define GPIO_SPI3_NSS	(GPIO_SPI3_NSS_2|GPIO_SPEED_50MHz)
+#define GPIO_SPI3_MOSI	(GPIO_SPI3_MOSI_2|GPIO_SPEED_50MHz)
+#define GPIO_SPI3_SCK   (GPIO_SPI3_SCK_2|GPIO_SPEED_50MHz)
+//#define GPIO_SPI3_NSS	(GPIO_SPI3_NSS_1|GPIO_SPEED_50MHz) /* PA15 */
 
 /* SPI DMA configuration for SPI3 (Flash and Radio) */
-#define DMACHAN_SPI3_RX DMAMAP_SPI3_RX_1
-#define DMACHAN_SPI3_TX DMAMAP_SPI3_TX_2
+#define DMACHAN_SPI3_RX DMAMAP_SPI3_RX_1  /* DMA1, STREAM0, CHANNEL0 */
+#define DMACHAN_SPI3_TX DMAMAP_SPI3_TX_2  /* DMA1, STREAM7, CHANNEL0 */
+
 /* SPI DMA configuration for SPI1 (MPU9250) */
-/* XXX since we allocate the HP work stack from CCM RAM on normal system startup,
+/* FIXME XXX since we allocate the HP work stack from CCM RAM on normal system startup,
    SPI1 will never run in DMA mode - so we can just give it a random config here.
    What we really need to do is to make DMA configurable per channel, and always
    disable it for SPI1. */
-#define DMACHAN_SPI1_RX DMAMAP_SPI1_RX_1
-#define DMACHAN_SPI1_TX DMAMAP_SPI1_TX_2
+#define DMACHAN_SPI1_RX DMAMAP_SPI1_RX_1 /* DMA2, STREAM0, CHANNEL3 */
+#define DMACHAN_SPI1_TX DMAMAP_SPI1_TX_1 /* DMA2, STREAM3, CHANNEL3 */
 
 /************************************************************************************
  * Public Data
