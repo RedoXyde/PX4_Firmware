@@ -59,4 +59,8 @@
 #define HW_ARCH "PX4_STM32F4DISCOVERY"
 #endif
 
+#ifdef CONFIG_ARCH_BOARD_SPARKY2
+#define HW_ARCH "SPARKY2"
+#endif
+
 #endif /* VERSION_H_ */

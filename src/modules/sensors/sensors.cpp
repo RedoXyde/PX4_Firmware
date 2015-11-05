@@ -109,6 +109,12 @@
  * IN5 - analog RSSI
  */
 
+#ifdef CONFIG_ARCH_BOARD_SPARKY2
+#define ADC_BATTERY_VOLTAGE_CHANNEL	10 // FIXME
+#define ADC_BATTERY_CURRENT_CHANNEL	-1 // FIXME
+#define ADC_AIRSPEED_VOLTAGE_CHANNEL	-1
+#endif
+
 #ifdef CONFIG_ARCH_BOARD_PX4FMU_V1
 #define ADC_BATTERY_VOLTAGE_CHANNEL	10
 #define ADC_BATTERY_CURRENT_CHANNEL	-1
@@ -640,7 +646,7 @@ Sensors::Sensors() :
 	(void)param_find("PWM_AUX_MIN");
 	(void)param_find("PWM_AUX_MAX");
 	(void)param_find("PWM_AUX_DISARMED");
-	
+
 	/* fetch initial parameter values */
 	parameters_update();
 }
@@ -1376,7 +1382,7 @@ Sensors::parameter_update_poll(bool forced)
 
 			bool config_ok = false;
 
-			/* run through all stored calibrations */ 
+			/* run through all stored calibrations */
 			for (unsigned i = 0; i < 3; i++) {
 				/* initially status is ok per config */
 				failed = false;
@@ -1442,7 +1448,7 @@ Sensors::parameter_update_poll(bool forced)
 
 			bool config_ok = false;
 
-			/* run through all stored calibrations */ 
+			/* run through all stored calibrations */
 			for (unsigned i = 0; i < 3; i++) {
 				/* initially status is ok per config */
 				failed = false;
@@ -1515,7 +1521,7 @@ Sensors::parameter_update_poll(bool forced)
 
 			bool config_ok = false;
 
-			/* run through all stored calibrations */ 
+			/* run through all stored calibrations */
 			for (unsigned i = 0; i < 3; i++) {
 				/* initially status is ok per config */
 				failed = false;
