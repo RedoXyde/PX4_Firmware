@@ -219,13 +219,13 @@ static void
 m25p_attach(void)
 {
 	/* find the right spi, use Sparky2 setting: SPI3 */
-	struct spi_dev_s *spi = up_spiinitialize(3);
+	struct spi_dev_s *spi = up_spiinitialize(PX4_SPI_BUS_MTD);
 
 	/* this resets the spi bus, set correct bus speed again */
-	SPI_SETFREQUENCY(spi, 10 * 1000 * 1000);
-	SPI_SETBITS(spi, 8);
-	SPI_SETMODE(spi, SPIDEV_MODE0);
-	SPI_SELECT(spi, SPIDEV_FLASH, false);
+// 	SPI_SETFREQUENCY(spi, 10 * 1000 * 1000);
+// 	SPI_SETBITS(spi, 8);
+// 	SPI_SETMODE(spi, SPIDEV_MODE0);
+// 	SPI_SELECT(spi, SPIDEV_FLASH, false);
 
 	if (spi == NULL)
 		errx(1, "failed to locate spi bus");
