@@ -55,6 +55,7 @@
 #include <systemlib/err.h>
 #include <geo/geo.h>
 #include <lib/mathlib/mathlib.h>
+#include <navigator/navigation.h>
 
 #include <uORB/uORB.h>
 #include <uORB/topics/mission.h>
@@ -188,8 +189,9 @@ Mission::on_active()
 	}
 
 	/* see if we need to update the current yaw heading for rotary wing types */
-	if (_navigator->get_vstatus()->is_rotary_wing 
+	if (_navigator->get_vstatus()->is_rotary_wing
 			&& _param_yawmode.get() != MISSION_YAWMODE_NONE
+			&& _param_yawmode.get() < MISSION_YAWMODE_MAX
 			&& _mission_type != MISSION_TYPE_NONE) {
 		heading_sp_update();
 	}
@@ -264,7 +266,7 @@ Mission::update_offboard_mission()
 		_navigator->set_mission_result_updated();
 
 	} else {
-		warnx("offboard mission update failed");
+		PX4_WARN("offboard mission update failed, handle: %d", _navigator->get_offboard_mission_sub());
 	}
 
 	if (failed) {
@@ -284,6 +286,7 @@ Mission::advance_mission()
 {
 	if (_takeoff) {
 		_takeoff = false;
+		_takeoff_finished = true;
 
 	} else {
 		switch (_mission_type) {
@@ -302,7 +305,7 @@ Mission::advance_mission()
 	}
 }
 
-int
+float
 Mission::get_absolute_altitude_for_item(struct mission_item_s &mission_item)
 {
 	if (_mission_item.altitude_is_relative) {
@@ -428,6 +431,8 @@ Mission::set_mission_items()
 		/* do takeoff before going to setpoint */
 		/* set mission item as next position setpoint */
 		mission_item_to_position_setpoint(&_mission_item, &pos_sp_triplet->next);
+		/* next SP is not takeoff anymore */
+		pos_sp_triplet->next.type = position_setpoint_s::SETPOINT_TYPE_POSITION;
 
 		/* calculate takeoff altitude */
 		float takeoff_alt = get_absolute_altitude_for_item(_mission_item);
@@ -462,6 +467,13 @@ Mission::set_mission_items()
 			/* skip takeoff */
 			_takeoff = false;
 		}
+	}
+
+	if (_takeoff_finished) {
+		/* we just finished takeoff */
+		/* in case we still have to move to the takeoff waypoint we need a waypoint mission item */
+		_mission_item.nav_cmd = NAV_CMD_WAYPOINT;
+		_takeoff_finished = false;
 	}
 
 	/* set current position setpoint from mission item */
@@ -520,40 +532,56 @@ Mission::heading_sp_update()
 
 	/* Don't change setpoint if last and current waypoint are not valid */
 	if (!pos_sp_triplet->previous.valid || !pos_sp_triplet->current.valid ||
-			!isfinite(_on_arrival_yaw)) {
+			!PX4_ISFINITE(_on_arrival_yaw)) {
 		return;
 	}
 
-	/* Don't do FOH for landing and takeoff waypoints, the ground may be near
-	 * and the FW controller has a custom landing logic */
-	if (_mission_item.nav_cmd == NAV_CMD_LAND || _mission_item.nav_cmd == NAV_CMD_TAKEOFF) {
+	/* Don't change heading for takeoff waypoints, the ground may be near */
+	if (_mission_item.nav_cmd == NAV_CMD_TAKEOFF) {
 		return;
 	}
 
 	/* set yaw angle for the waypoint iff a loiter time has been specified */
 	if (_waypoint_position_reached && _mission_item.time_inside > 0.0f) {
 		_mission_item.yaw = _on_arrival_yaw;
-	/* always keep the front of the rotary wing pointing to the next waypoint */
-	} else if (_param_yawmode.get() == MISSION_YAWMODE_FRONT_TO_WAYPOINT) {
-		_mission_item.yaw = get_bearing_to_next_waypoint(
-		        _navigator->get_global_position()->lat,
-		        _navigator->get_global_position()->lon,
-		        _mission_item.lat,
-		        _mission_item.lon);
-	/* always keep the back of the rotary wing pointing towards home */
-	} else if (_param_yawmode.get() == MISSION_YAWMODE_FRONT_TO_HOME) {
-		_mission_item.yaw = get_bearing_to_next_waypoint(
-		        _navigator->get_global_position()->lat,
-		        _navigator->get_global_position()->lon,
-		        _navigator->get_home_position()->lat,
-		        _navigator->get_home_position()->lon);
-	/* always keep the back of the rotary wing pointing towards home */
-	} else if (_param_yawmode.get() == MISSION_YAWMODE_BACK_TO_HOME) {
-		_mission_item.yaw = _wrap_pi(get_bearing_to_next_waypoint(
-		        _navigator->get_global_position()->lat,
-		        _navigator->get_global_position()->lon,
-		        _navigator->get_home_position()->lat,
-		        _navigator->get_home_position()->lon) + M_PI_F);
+	} else {
+
+		/* calculate direction the vehicle should point to:
+		 * normal waypoint: current position to {waypoint or home or home + 180deg}
+		 * landing waypoint: last waypoint to {waypoint or home or home + 180deg}
+		 * For landing the last waypoint (= constant) is used to avoid excessive yawing near the ground
+		 */
+		double point_from_latlon[2];
+		if (_mission_item.nav_cmd == NAV_CMD_LAND) {
+			point_from_latlon[0] = pos_sp_triplet->previous.lat;
+			point_from_latlon[1] = pos_sp_triplet->previous.lon;
+		} else {
+			point_from_latlon[0] = _navigator->get_global_position()->lat;
+			point_from_latlon[1] = _navigator->get_global_position()->lon;
+		}
+
+		/* always keep the front of the rotary wing pointing to the next waypoint */
+		if (_param_yawmode.get() == MISSION_YAWMODE_FRONT_TO_WAYPOINT) {
+			_mission_item.yaw = get_bearing_to_next_waypoint(
+				point_from_latlon[0],
+				point_from_latlon[1],
+				_mission_item.lat,
+				_mission_item.lon);
+		/* always keep the back of the rotary wing pointing towards home */
+		} else if (_param_yawmode.get() == MISSION_YAWMODE_FRONT_TO_HOME) {
+			_mission_item.yaw = get_bearing_to_next_waypoint(
+				point_from_latlon[0],
+				point_from_latlon[1],
+				_navigator->get_home_position()->lat,
+				_navigator->get_home_position()->lon);
+		/* always keep the back of the rotary wing pointing towards home */
+		} else if (_param_yawmode.get() == MISSION_YAWMODE_BACK_TO_HOME) {
+			_mission_item.yaw = _wrap_pi(get_bearing_to_next_waypoint(
+				point_from_latlon[0],
+				point_from_latlon[1],
+				_navigator->get_home_position()->lat,
+				_navigator->get_home_position()->lon) + M_PI_F);
+		}
 	}
 
 	mission_item_to_position_setpoint(&_mission_item, &pos_sp_triplet->current);
@@ -568,7 +596,7 @@ Mission::altitude_sp_foh_update()
 
 	/* Don't change setpoint if last and current waypoint are not valid */
 	if (!pos_sp_triplet->previous.valid || !pos_sp_triplet->current.valid ||
-			!isfinite(_mission_item_previous_alt)) {
+			!PX4_ISFINITE(_mission_item_previous_alt)) {
 		return;
 	}
 
@@ -655,8 +683,10 @@ Mission::read_mission_item(bool onboard, bool is_current, struct mission_item_s 
 	for (int i = 0; i < 10; i++) {
 
 		if (*mission_index_ptr < 0 || *mission_index_ptr >= (int)mission->count) {
-			/* mission item index out of bounds */
-			mavlink_and_console_log_critical(_navigator->get_mavlink_fd(), "[wpm] err: index: %d, max: %d", *mission_index_ptr, (int)mission->count);
+			/* mission item index out of bounds - if they are equal, we just reached the end */
+			if (*mission_index_ptr != (int)mission->count) {
+				mavlink_and_console_log_critical(_navigator->get_mavlink_fd(), "[wpm] err: index: %d, max: %d", *mission_index_ptr, (int)mission->count);
+			}
 			return false;
 		}
 

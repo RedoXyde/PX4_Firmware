@@ -35,12 +35,31 @@
  * @file mc_att_control_params.c
  * Parameters for multicopter attitude controller.
  *
- * @author Tobias Naegeli <naegelit@student.ethz.ch>
  * @author Lorenz Meier <lorenz@px4.io>
  * @author Anton Babushkin <anton@px4.io>
  */
 
-#include <systemlib/param/param.h>
+/**
+ * Roll time constant
+ *
+ * Reduce if the system is too twitchy, increase if the response is too slow and sluggish.
+ *
+ * @min 0.15
+ * @max 0.25
+ * @group Multicopter Attitude Control
+ */
+PARAM_DEFINE_FLOAT(MC_ROLL_TC, 0.2f);
+
+/**
+ * Pitch time constant
+ *
+ * Reduce if the system is too twitchy, increase if the response is too slow and sluggish.
+ *
+ * @min 0.15
+ * @max 0.25
+ * @group Multicopter Attitude Control
+ */
+PARAM_DEFINE_FLOAT(MC_PITCH_TC, 0.2f);
 
 /**
  * Roll P gain
@@ -215,7 +234,7 @@ PARAM_DEFINE_FLOAT(MC_YAW_FF, 0.5f);
  * @max 360.0
  * @group Multicopter Attitude Control
  */
-PARAM_DEFINE_FLOAT(MC_ROLLRATE_MAX, 360.0f);
+PARAM_DEFINE_FLOAT(MC_ROLLRATE_MAX, 220.0f);
 
 /**
  * Max pitch rate
@@ -227,7 +246,7 @@ PARAM_DEFINE_FLOAT(MC_ROLLRATE_MAX, 360.0f);
  * @max 360.0
  * @group Multicopter Attitude Control
  */
-PARAM_DEFINE_FLOAT(MC_PITCHRATE_MAX, 360.0f);
+PARAM_DEFINE_FLOAT(MC_PITCHRATE_MAX, 220.0f);
 
 /**
  * Max yaw rate
@@ -251,7 +270,7 @@ PARAM_DEFINE_FLOAT(MC_YAWRATE_MAX, 60.0f);
  * @max 360.0
  * @group Multicopter Attitude Control
  */
-PARAM_DEFINE_FLOAT(MC_ACRO_R_MAX, 90.0f);
+PARAM_DEFINE_FLOAT(MC_ACRO_R_MAX, 360.0f);
 
 /**
  * Max acro pitch rate
@@ -261,7 +280,7 @@ PARAM_DEFINE_FLOAT(MC_ACRO_R_MAX, 90.0f);
  * @max 360.0
  * @group Multicopter Attitude Control
  */
-PARAM_DEFINE_FLOAT(MC_ACRO_P_MAX, 90.0f);
+PARAM_DEFINE_FLOAT(MC_ACRO_P_MAX, 360.0f);
 
 /**
  * Max acro yaw rate
@@ -270,4 +289,17 @@ PARAM_DEFINE_FLOAT(MC_ACRO_P_MAX, 90.0f);
  * @min 0.0
  * @group Multicopter Attitude Control
  */
-PARAM_DEFINE_FLOAT(MC_ACRO_Y_MAX, 120.0f);
+PARAM_DEFINE_FLOAT(MC_ACRO_Y_MAX, 360.0f);
+
+/**
+ * Threshold for Rattitude mode
+ *
+ * Manual input needed in order to override attitude control rate setpoints
+ * and instead pass manual stick inputs as rate setpoints
+ *
+ * @unit
+ * @min 0.0
+ * @max 1.0
+ * @group Multicopter Attitude Control
+ */
+PARAM_DEFINE_FLOAT(MC_RATT_TH, 1.0f);
