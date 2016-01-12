@@ -7,8 +7,8 @@ CONFIG_NUTTX_NEWCONFIG=y
 # Build Setup
 #
 # CONFIG_EXPERIMENTAL is not set
-# CONFIG_HOST_LINUX is not set
-CONFIG_HOST_OSX=y
+CONFIG_HOST_LINUX=y
+# CONFIG_HOST_OSX is not set
 # CONFIG_HOST_WINDOWS is not set
 # CONFIG_HOST_OTHER is not set
 
@@ -37,7 +37,7 @@ CONFIG_ARCH_MATH_H=y
 # Debug Options
 #
 # CONFIG_DEBUG is not set
-CONFIG_DEBUG_SYMBOLS=y
+#CONFIG_DEBUG_SYMBOLS is not set
 
 #
 # System Type
