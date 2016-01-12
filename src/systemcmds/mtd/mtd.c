@@ -222,10 +222,10 @@ m25p_attach(void)
 	struct spi_dev_s *spi = up_spiinitialize(PX4_SPI_BUS_MTD);
 
 	/* this resets the spi bus, set correct bus speed again */
-// 	SPI_SETFREQUENCY(spi, 10 * 1000 * 1000);
-// 	SPI_SETBITS(spi, 8);
-// 	SPI_SETMODE(spi, SPIDEV_MODE0);
-// 	SPI_SELECT(spi, SPIDEV_FLASH, false);
+	SPI_SETFREQUENCY(spi, 10 * 1000 * 1000);
+	SPI_SETBITS(spi, 8);
+	SPI_SETMODE(spi, SPIDEV_MODE0);
+	SPI_SELECT(spi, SPIDEV_FLASH, false);
 
 	if (spi == NULL)
 		errx(1, "failed to locate spi bus");
@@ -248,13 +248,13 @@ m25p_attach(void)
 	if (mtd_dev == NULL)
 		errx(1, "failed to initialize mtd driver");
 
-	int ret = mtd_dev->ioctl(mtd_dev, MTDIOC_SETSPEED, (unsigned long)10*1000*1000);
-	if (ret != OK) {
-		// FIXME: From the previous warnx call, it looked like this should have been an errx instead. Tried
-		// that but setting the bug speed does fail all the time. Which was then exiting and the board would
-		// not run correctly. So changed to warnx.
-		warnx("failed to set bus speed");
-	}
+// 	int ret = mtd_dev->ioctl(mtd_dev, MTDIOC_SETSPEED, (unsigned long)10*1000*1000);
+// 	if (ret != OK) {
+// 		// FIXME: From the previous warnx call, it looked like this should have been an errx instead. Tried
+// 		// that but setting the bug speed does fail all the time. Which was then exiting and the board would
+// 		// not run correctly. So changed to warnx.
+// 		warnx("failed to set bus speed");
+// 	}
 
 	attached = true;
 }
@@ -310,7 +310,7 @@ mtd_start(char *partition_names[], unsigned n_partitions)
 	}
 
 	if (!mtd_dev) {
-		warnx("ERROR: Failed to create RAMTRON FRAM MTD instance");
+		warnx("ERROR: Failed to create MTD instance");
 		exit(1);
 	}
 
@@ -383,7 +383,11 @@ int mtd_get_geometry(unsigned long *blocksize, unsigned long *erasesize, unsigne
 	}
 
 	*blocksize = geo.blocksize;
-	*erasesize = geo.blocksize;
+  #if defined(CONFIG_ARCH_BOARD_SPARKY2)
+	*erasesize = geo.erasesize;
+  #else
+  *erasesize = geo.blocksize;
+  #endif
 	*neraseblocks = geo.neraseblocks;
 
 	/* Determine the size of each partition.  Make each partition an even
@@ -394,6 +398,9 @@ int mtd_get_geometry(unsigned long *blocksize, unsigned long *erasesize, unsigne
 	*blkpererase = geo.erasesize / geo.blocksize;
 	*nblocks     = (geo.neraseblocks / n_partitions) * *blkpererase;
 	*partsize    = *nblocks * geo.blocksize;
+
+	warnx("Geom: blocksize=%lu erasesize=%lu neraseblocks=%lu, blkpererase=%u, nblocks=%u, partsize=%u, n_partitions=%u",
+      *blocksize, *erasesize, *neraseblocks, *blkpererase, *nblocks, *partsize, n_partitions);
 
 	return ret;
 }
