@@ -6,7 +6,8 @@
 	url = https://github.com/mavlink/c_library_v2.git
 [submodule "NuttX"]
 	path = NuttX
-	url = https://github.com/PX4/NuttX.git
+	url = git://github.com/RedoXyde/PX4_NuttX.git
+	branch = sparky2
 [submodule "src/modules/uavcan/libuavcan"]
 	path = src/modules/uavcan/libuavcan
 	url = https://github.com/UAVCAN/libuavcan.git
