@@ -62,7 +62,6 @@
  * Device paths for things that support the GPIO ioctl protocol.
  */
 # define PX4FMU_DEVICE_PATH	"/dev/px4fmu"
-# define PX4IO_DEVICE_PATH	"/dev/px4io"
 
 #endif
 

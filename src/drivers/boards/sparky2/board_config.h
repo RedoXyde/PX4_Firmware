@@ -133,7 +133,7 @@ __BEGIN_DECLS
 // #define PX4_I2C_OBDEV_LED	0x55
 
 /*
- * ADC Channels 
+ * ADC Channels
  *
  * These are the channel numbers of the ADCs of the microcontroller that can be used by the Px4 Firmware in the adc driver
  */
@@ -141,9 +141,9 @@ __BEGIN_DECLS
 
 // ADC defines to be used in sensors.cpp to read from a particular channel
 #define ADC_BATTERY_VOLTAGE_CHANNEL   10
-//#define ADC_BATTERY_CURRENT_CHANNEL   -1
-//#define ADC_5V_RAIL_SENSE       -1
-// #define ADC_AIRSPEED_VOLTAGE_CHANNEL  15
+#define ADC_BATTERY_CURRENT_CHANNEL   -1
+#define ADC_5V_RAIL_SENSE             -1
+#define ADC_AIRSPEED_VOLTAGE_CHANNEL  -1
 
 /* User GPIOs
  *
@@ -233,6 +233,11 @@ __BEGIN_DECLS
 /* Assume SBUS and PPM use the same input, PC7 */
 #define HRT_PPM_CHANNEL		2	/* use capture/compare channel 2 */
 #define GPIO_PPM_IN		(GPIO_ALT|GPIO_AF1|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN7)
+
+/* FIXME ! */
+#define PWMIN_TIMER		2
+#define PWMIN_TIMER_CHANNEL	2
+#define GPIO_PWM_IN		GPIO_TIM4_CH2IN_2
 
 /****************************************************************************************************
  * Public Types
