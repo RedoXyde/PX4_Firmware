@@ -14,8 +14,8 @@ set(config_module_list
 	drivers/stm32/tone_alarm
 	drivers/led
 	drivers/px4fmu
-	drivers/boards/px4fmu-v4
-	drivers/rgbled
+	drivers/boards/sparky2
+#	drivers/rgbled # Broken since PX4_I2C_BUS_LED not defined
 	drivers/mpu6000
 	drivers/mpu9250
 	drivers/hmc5883
@@ -38,7 +38,7 @@ set(config_module_list
 	modules/sensors
 	drivers/mkblctrl
 	drivers/px4flow
-	drivers/oreoled
+#	drivers/oreoled # Broken since PX4_I2C_BUS_LED not defined
 	drivers/gimbal
 	drivers/pwm_input
 	drivers/camera_trigger

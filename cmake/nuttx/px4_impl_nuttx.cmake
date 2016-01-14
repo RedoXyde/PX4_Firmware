@@ -142,7 +142,7 @@ function(px4_nuttx_generate_builtin_commands)
 		set(MAIN_DEFAULT MAIN-NOTFOUND)
 		set(STACK_DEFAULT 1024)
 		set(PRIORITY_DEFAULT SCHED_PRIORITY_DEFAULT)
-		foreach(property MAIN STACK PRIORITY) 
+		foreach(property MAIN STACK PRIORITY)
 			get_target_property(${property} ${module} ${property})
 			if(NOT ${property})
 				set(${property} ${${property}_DEFAULT})
@@ -322,7 +322,7 @@ function(px4_nuttx_add_romfs)
 
 	set(cmake_test ${CMAKE_SOURCE_DIR}/cmake/test/cmake_tester.py)
 
-	
+
 	set(extras)
 	foreach(extra ${EXTRAS})
 		get_filename_component(file_name ${extra} NAME)
@@ -460,6 +460,14 @@ function(px4_os_add_flags)
 			-mfloat-abi=hard
 			)
 	elseif (${BOARD} STREQUAL "px4fmu-v4")
+		set(cpu_flags
+			-mcpu=cortex-m4
+			-mthumb
+			-march=armv7e-m
+			-mfpu=fpv4-sp-d16
+			-mfloat-abi=hard
+			)
+	elseif (${BOARD} STREQUAL "sparky2")
 		set(cpu_flags
 			-mcpu=cortex-m4
 			-mthumb
