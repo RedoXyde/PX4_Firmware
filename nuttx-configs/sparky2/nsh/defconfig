@@ -1008,6 +1008,7 @@ CONFIG_SYSTEM_SYSINFO=y
 #
 # USB Monitor
 #
+CONFIG_NSOCKET_DESCRIPTORS=0
 
 # Application configuration
 
