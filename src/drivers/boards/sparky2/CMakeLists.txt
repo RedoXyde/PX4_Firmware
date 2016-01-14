@@ -1,6 +1,6 @@
 ############################################################################
 #
-#   Copyright (c) 2012, 2013 PX4 Development Team. All rights reserved.
+#   Copyright (c) 2015 PX4 Development Team. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -30,15 +30,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 ############################################################################
-
-#
-# Build the config tool.
-#
-
-MODULE_COMMAND	 = config
-SRCS		 = config.c
-
-MODULE_STACKSIZE = 4096
-
-MAXOPTIMIZATION	 = -Os
-
+px4_add_module(
+	MODULE drivers__boards__sparky2
+	COMPILE_FLAGS
+		-Os
+	SRCS
+    sparky2_can.c
+    sparky2_init.c
+    sparky2_pwm_servo.c
+    sparky2_spi.c
+    sparky2_usb.c
+    sparky2_led.c
+	DEPENDS
+		platforms__common
+	)
+# vim: set noet ft=cmake fenc=utf-8 ff=unix :
