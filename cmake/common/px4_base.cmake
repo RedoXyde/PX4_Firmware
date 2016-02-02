@@ -811,11 +811,19 @@ function(px4_generate_airframes_xml)
 		REQUIRED OUT BOARD
 		ARGN ${ARGN})
 	set(process_airframes ${CMAKE_SOURCE_DIR}/Tools/px_process_airframes.py)
+  if(NOT ${BOARD} STREQUAL "sparky2")
 	add_custom_command(OUTPUT ${OUT}
 		COMMAND ${PYTHON_EXECUTABLE} ${process_airframes}
 			-a ${CMAKE_SOURCE_DIR}/ROMFS/px4fmu_common/init.d
 			--board CONFIG_ARCH_BOARD_${BOARD} --xml
 		)
+  else()
+  add_custom_command(OUTPUT ${OUT}
+		COMMAND ${PYTHON_EXECUTABLE} ${process_airframes}
+			-a ${CMAKE_SOURCE_DIR}/ROMFS/sparky2/init.d
+			--board CONFIG_ARCH_BOARD_${BOARD} --xml
+		)
+  endif()
 	set(${OUT} ${${OUT}} PARENT_SCOPE)
 endfunction()
 

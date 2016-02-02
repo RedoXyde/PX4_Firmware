@@ -44,11 +44,17 @@ if(NOT ${BOARD} STREQUAL "sim")
 	if (config_io_board)
 		set(extras "${CMAKE_BINARY_DIR}/src/modules/px4iofirmware/${config_io_board}.bin")
 	endif()
-
+  if(NOT ${BOARD} STREQUAL "sparky2")
 	px4_nuttx_add_romfs(OUT romfs
 		ROOT ROMFS/px4fmu_common
 		EXTRAS ${extras}
 		)
+  else()
+  px4_nuttx_add_romfs(OUT romfs
+		ROOT ROMFS/sparky2
+		EXTRAS ${extras}
+		)
+  endif()
 	if (config_io_board)
 	    add_dependencies(romfs fw_io)
 	endif()
