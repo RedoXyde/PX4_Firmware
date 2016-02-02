@@ -13,10 +13,10 @@ set(config_module_list
 	drivers/stm32/adc
 	drivers/stm32/tone_alarm
 	drivers/led
-	drivers/px4fmu
+#	drivers/px4fmu
 	drivers/boards/sparky2
 #	drivers/rgbled # Broken since PX4_I2C_BUS_LED not defined
-	drivers/mpu6000
+#	drivers/mpu6000
 	drivers/mpu9250
 #	drivers/hmc5883 # Breaks compilation, must be a missing define
 	drivers/ms5611

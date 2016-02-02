@@ -2037,11 +2037,11 @@ Sensors::task_main()
 		ret = gyro_init();
 
 		if (ret) { break; }
-
+#if !defined(CONFIG_ARCH_BOARD_SPARKY2)
 		ret = mag_init();
 
 		if (ret) { break; }
-
+#endif
 		ret = baro_init();
 
 		if (ret) { break; }
