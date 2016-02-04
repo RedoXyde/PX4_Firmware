@@ -225,12 +225,13 @@ __BEGIN_DECLS
 
 /*
  * High-resolution timer
- * FIXME
+ * Note: Don't use "complementary" channels (such as ch1 & ch2) for HRT and PPM
+ *       it just doesn't work (see note in src/drivers/stm32/drv_hrt.c)
  */
-#define HRT_TIMER		1	/* use timer8 for the HRT */
-#define HRT_TIMER_CHANNEL	1	/* use capture/compare channel */
+#define HRT_TIMER		1	/* use timer1 for the HRT */
+#define HRT_TIMER_CHANNEL	4	/* use capture/compare channel */
 
-/* Assume SBUS and PPM use the same input, PC7 */
+/* FIXME Assume SBUS and PPM use the same input, PC7 */
 #define HRT_PPM_CHANNEL		2	/* use capture/compare channel 2 */
 #define GPIO_PPM_IN		(GPIO_ALT|GPIO_AF1|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN7)
 
