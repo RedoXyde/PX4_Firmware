@@ -161,14 +161,21 @@ __BEGIN_DECLS
 
 /*
  * Tone alarm output
+ * TODO FIXME
  */
-// #define TONE_ALARM_TIMER	3	/* timer 3 */
-// #define TONE_ALARM_CHANNEL	3	/* channel 3 */
-// #define GPIO_TONE_ALARM_IDLE	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN8)
-// #define GPIO_TONE_ALARM		(GPIO_ALT|GPIO_AF2|GPIO_SPEED_2MHz|GPIO_FLOAT|GPIO_PUSHPULL|GPIO_PORTC|GPIO_PIN8)
+// #define TONE_ALARM_TIMER	12	/* timer 12 */
+// #define TONE_ALARM_CHANNEL	1	/* channel 1 */
+// #define GPIO_TONE_ALARM_IDLE	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN14)
+// #define GPIO_TONE_ALARM		(GPIO_ALT|GPIO_AF2|GPIO_SPEED_2MHz|GPIO_FLOAT|GPIO_PUSHPULL|GPIO_PORTB|GPIO_PIN15)
 
 /*
  * PWM
+ *
+ *  Four buffered PWM can be configured, routed to the
+ *      - Q1A, PB14, TIM12CH1
+ *      - Q1B, PB15, TIM12CH2
+ *      - Q2A, PC8,  TIM8CH3
+ *      - Q2B, PC9,  TIM8CH4
  *
  *  Six PWM can be configured and are routed to the Servo Port
  *      - Servo_Out_1   PB0, TIM3CH3
@@ -187,7 +194,13 @@ __BEGIN_DECLS
 #define GPIO_TIM5_CH1OUT	GPIO_TIM5_CH1OUT_1
 #define GPIO_TIM5_CH2OUT	GPIO_TIM5_CH2OUT_1
 
+#define GPIO_TIM8_CH3OUT  GPIO_TIM8_CH3OUT_1
+#define GPIO_TIM8_CH4OUT  GPIO_TIM8_CH4OUT_1
+
 #define GPIO_TIM9_CH2OUT	GPIO_TIM9_CH2OUT_1
+
+#define GPIO_TIM12_CH1OUT GPIO_TIM12_CH1OUT_2
+#define GPIO_TIM12_CH2OUT GPIO_TIM12_CH2OUT_2
 
 /* USB OTG FS
  *
@@ -195,13 +208,15 @@ __BEGIN_DECLS
  */
 #define GPIO_OTGFS_VBUS (GPIO_INPUT|GPIO_FLOAT|GPIO_SPEED_100MHz|GPIO_OPENDRAIN|GPIO_PORTA|GPIO_PIN8)
 
-/* High-resolution timer
+/*
+ * High-resolution timer
+ * FIXME
  */
-#define HRT_TIMER		8	/* use timer1 for the HRT */
+#define HRT_TIMER		1	/* use timer8 for the HRT */
 #define HRT_TIMER_CHANNEL	1	/* use capture/compare channel */
 
-/* Assume SBUS and PPM use the same input */
-#define HRT_PPM_CHANNEL		2	/* use capture/compare channel 3 */
+/* Assume SBUS and PPM use the same input, PC7 */
+#define HRT_PPM_CHANNEL		2	/* use capture/compare channel 2 */
 #define GPIO_PPM_IN		(GPIO_ALT|GPIO_AF1|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN7)
 
 /****************************************************************************************************
