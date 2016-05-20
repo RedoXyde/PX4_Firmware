@@ -59,8 +59,8 @@ __BEGIN_DECLS
 /* Configuration ************************************************************************************/
 
 /* PX4IO connection configuration */
-//#define PX4IO_SERIAL_DEVICE	"/dev/ttyS2"
-//#define UDID_START		0x1FFF7A10
+#define PX4IO_SERIAL_DEVICE	"/dev/ttyS1"
+#define UDID_START		0x1FFF7A10
 
 //#ifdef CONFIG_STM32_SPI2
 //#  error "SPI2 is not supported on this board"
@@ -102,7 +102,7 @@ __BEGIN_DECLS
  */
 #define PX4_SPIDEV_FLASH	1
 #define PX4_SPIDEV_RADIO	2
-#define PX4_SPIDEV_IMU		3
+#define PX4_SPIDEV_MPU		3
 
 /*
  * Optional devices on IO's external port
