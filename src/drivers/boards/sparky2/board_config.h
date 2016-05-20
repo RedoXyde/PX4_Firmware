@@ -112,8 +112,9 @@ __BEGIN_DECLS
  * FIXME: MPU9250 code uses PX4_SPIDEV_ name, MTD driver uses SPIDEV_ name...
  *        Update MTD driver to use PX4_ prefix would be better
  */
-#define SPIDEV_FLASH      1
-#define PX4_SPIDEV_RADIO	2
+#define PX4_SPIDEV_RADIO	1
+#define SPIDEV_FLASH      2
+
 
 /*
  * Optional devices on IO's external port
