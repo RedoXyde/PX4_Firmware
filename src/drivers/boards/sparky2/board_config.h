@@ -58,13 +58,7 @@ __BEGIN_DECLS
  ****************************************************************************************************/
 /* Configuration ************************************************************************************/
 
-/* PX4IO connection configuration */
-//#define PX4IO_SERIAL_DEVICE	"/dev/ttyS1"
 #define UDID_START		0x1FFF7A10
-
-//#ifdef CONFIG_STM32_SPI2
-//#  error "SPI2 is not supported on this board"
-//#endif
 
 #if defined(CONFIG_STM32_CAN1)
 #  warning "CAN1 is not supported on this board"
@@ -138,8 +132,18 @@ __BEGIN_DECLS
 // #define PX4_I2C_OBDEV_EEPROM	NOTDEFINED
 // #define PX4_I2C_OBDEV_LED	0x55
 
-// #define PX4_I2C_OBDEV_PX4IO_BL	0x18
-// #define PX4_I2C_OBDEV_PX4IO	0x1a
+/*
+ * ADC Channels 
+ *
+ * These are the channel numbers of the ADCs of the microcontroller that can be used by the Px4 Firmware in the adc driver
+ */
+#define ADC_CHANNELS (1 << 12) // FIXME
+
+// ADC defines to be used in sensors.cpp to read from a particular channel
+#define ADC_BATTERY_VOLTAGE_CHANNEL   10
+//#define ADC_BATTERY_CURRENT_CHANNEL   -1
+//#define ADC_5V_RAIL_SENSE       -1
+// #define ADC_AIRSPEED_VOLTAGE_CHANNEL  15
 
 /* User GPIOs
  *
@@ -210,6 +214,8 @@ __BEGIN_DECLS
 
 #define GPIO_TIM12_CH1OUT GPIO_TIM12_CH1OUT_2
 #define GPIO_TIM12_CH2OUT GPIO_TIM12_CH2OUT_2
+
+#define DIRECT_PWM_OUTPUT_CHANNELS 6
 
 /* USB OTG FS
  *
