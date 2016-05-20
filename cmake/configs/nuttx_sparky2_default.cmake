@@ -18,7 +18,7 @@ set(config_module_list
 #	drivers/rgbled # Broken since PX4_I2C_BUS_LED not defined
 	drivers/mpu6000
 	drivers/mpu9250
-	drivers/hmc5883
+#	drivers/hmc5883 # Breaks compilation, must be a missing define
 	drivers/ms5611
 	drivers/mb12xx
 	drivers/srf02
@@ -70,7 +70,7 @@ set(config_module_list
 	modules/navigator
 	modules/mavlink
 	modules/gpio_led
-	modules/uavcan
+#	modules/uavcan  # Broken because libuavcan doesn't compile, missing std::abs and std::strtoull
 	modules/land_detector
 
 	#
@@ -171,8 +171,8 @@ set(config_extra_builtin_cmds
 
 set(config_extra_libs
 	${CMAKE_SOURCE_DIR}/src/lib/mathlib/CMSIS/libarm_cortexM4lf_math.a
-	uavcan
-	uavcan_stm32_driver
+#	uavcan
+#	uavcan_stm32_driver
 	)
 
 set(config_io_extra_libs
