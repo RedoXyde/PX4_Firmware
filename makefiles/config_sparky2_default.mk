@@ -1,11 +1,11 @@
 #
-# Makefile for the px4fmu_default configuration
+# Makefile for the sparky2_default configuration
 #
 
 #
 # Use the configuration's ROMFS.
 #
-ROMFS_ROOT	 = $(PX4_BASE)/ROMFS/px4fmu_common
+ROMFS_ROOT	 = $(PX4_BASE)/ROMFS/sparky2
 #ROMFS_OPTIONAL_FILES = $(PX4_BASE)/Images/sparky2_default.bin
 
 #
@@ -14,20 +14,20 @@ ROMFS_ROOT	 = $(PX4_BASE)/ROMFS/px4fmu_common
 MODULES		+= drivers/device
 MODULES		+= drivers/stm32
 MODULES		+= drivers/stm32/adc
-#MODULES		+= drivers/stm32/tone_alarm
+MODULES		+= drivers/stm32/tone_alarm
 MODULES		+= drivers/led
 # MODULES		+= drivers/px4io
 MODULES		+= drivers/px4fmu
 MODULES		+= drivers/boards/sparky2
-MODULES		+= drivers/ardrone_interface
+#MODULES		+= drivers/ardrone_interface
 MODULES		+= drivers/mpu9250
 #MODULES		+= drivers/l3gd20
 #MODULES		+= drivers/mpu6000
 #MODULES		+= drivers/hmc5883
 MODULES		+= drivers/ms5611
-MODULES		+= drivers/ll40ls
-MODULES		+= drivers/trone
-MODULES		+= drivers/mb12xx
+#MODULES		+= drivers/ll40ls
+#MODULES		+= drivers/trone
+#MODULES		+= drivers/mb12xx
 MODULES		+= drivers/gps
 MODULES		+= drivers/hil
 MODULES		+= drivers/blinkm
@@ -38,7 +38,7 @@ MODULES		+= drivers/ets_airspeed
 MODULES		+= drivers/meas_airspeed
 MODULES		+= drivers/frsky_telemetry
 MODULES		+= modules/sensors
-MODULES		+= drivers/px4flow
+#MODULES		+= drivers/px4flow
 
 #
 # System commands
@@ -62,7 +62,7 @@ MODULES		+= systemcmds/ver
 MODULES		+= modules/commander
 MODULES		+= modules/navigator
 MODULES		+= modules/mavlink
-# MODULES		+= modules/gpio_led
+#MODULES		+= modules/gpio_led
 MODULES 	+= modules/land_detector
 
 #
@@ -90,7 +90,7 @@ MODULES		+= modules/mc_pos_control
 #
 # Unit tests
 #
-#MODULES 	+= modules/unit_test
+MODULES 	+= modules/unit_test
 #MODULES 	+= modules/commander/commander_tests
 
 #

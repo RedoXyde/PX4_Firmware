@@ -59,7 +59,7 @@ __BEGIN_DECLS
 /* Configuration ************************************************************************************/
 
 /* PX4IO connection configuration */
-#define PX4IO_SERIAL_DEVICE	"/dev/ttyS1"
+//#define PX4IO_SERIAL_DEVICE	"/dev/ttyS1"
 #define UDID_START		0x1FFF7A10
 
 //#ifdef CONFIG_STM32_SPI2
@@ -163,10 +163,10 @@ __BEGIN_DECLS
  * Tone alarm output
  * TODO FIXME
  */
-// #define TONE_ALARM_TIMER	12	/* timer 12 */
-// #define TONE_ALARM_CHANNEL	1	/* channel 1 */
-// #define GPIO_TONE_ALARM_IDLE	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN14)
-// #define GPIO_TONE_ALARM		(GPIO_ALT|GPIO_AF2|GPIO_SPEED_2MHz|GPIO_FLOAT|GPIO_PUSHPULL|GPIO_PORTB|GPIO_PIN15)
+#define TONE_ALARM_TIMER	4	/* timer 11 */
+#define TONE_ALARM_CHANNEL	3	/* channel 3 */
+#define GPIO_TONE_ALARM_IDLE	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN14)
+#define GPIO_TONE_ALARM		(GPIO_ALT|GPIO_AF2|GPIO_SPEED_2MHz|GPIO_FLOAT|GPIO_PUSHPULL|GPIO_PORTB|GPIO_PIN14)
 
 /*
  * PWM
