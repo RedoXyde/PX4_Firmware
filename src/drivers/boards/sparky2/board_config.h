@@ -204,6 +204,33 @@ __BEGIN_DECLS
 #define HRT_PPM_CHANNEL		2	/* use capture/compare channel 3 */
 #define GPIO_PPM_IN		(GPIO_ALT|GPIO_AF1|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN7)
 
+#define BOARD_NAME "SPARKY2"
+
+/* By Providing BOARD_ADC_USB_CONNECTED this board support the ADC
+ * system_power interface, and therefore provides the true logic
+ * GPIO BOARD_ADC_xxxx macros.
+ */
+// #define BOARD_ADC_USB_CONNECTED (px4_arch_gpioread(GPIO_OTGFS_VBUS))
+// #define BOARD_ADC_BRICK_VALID   (!px4_arch_gpioread(GPIO_VDD_BRICK_VALID))
+// #define BOARD_ADC_SERVO_VALID   (!px4_arch_gpioread(GPIO_VDD_SERVO_VALID))
+// #define BOARD_ADC_PERIPH_5V_OC  (!px4_arch_gpioread(GPIO_VDD_5V_PERIPH_OC))
+// #define BOARD_ADC_HIPOWER_5V_OC (!px4_arch_gpioread(GPIO_VDD_5V_HIPOWER_OC))
+//
+// #define BOARD_HAS_PWM	DIRECT_PWM_OUTPUT_CHANNELS
+
+#define BOARD_FMU_GPIO_TAB { \
+       {GPIO_GPIO0_INPUT, GPIO_GPIO0_OUTPUT, 0}, \
+       {GPIO_GPIO1_INPUT, GPIO_GPIO1_OUTPUT, 0}, \
+       {GPIO_GPIO2_INPUT, GPIO_GPIO2_OUTPUT, GPIO_USART2_CTS_1}, \
+       {GPIO_GPIO3_INPUT, GPIO_GPIO3_OUTPUT, GPIO_USART2_RTS_1}, \
+       {GPIO_GPIO4_INPUT, GPIO_GPIO4_OUTPUT, GPIO_USART2_TX_1}, \
+       {GPIO_GPIO5_INPUT, GPIO_GPIO5_OUTPUT, GPIO_USART2_RX_1}, \
+       {GPIO_GPIO6_INPUT, GPIO_GPIO6_OUTPUT, GPIO_CAN2_TX_2}, \
+       {GPIO_GPIO7_INPUT, GPIO_GPIO7_OUTPUT, GPIO_CAN2_RX_2}, }
+
+/* This board provides a DMA pool and APIs */
+
+#define BOARD_DMA_ALLOC_POOL_SIZE 5120
 /****************************************************************************************************
  * Public Types
  ****************************************************************************************************/

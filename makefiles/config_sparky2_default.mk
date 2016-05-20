@@ -16,7 +16,7 @@ MODULES		+= drivers/stm32
 MODULES		+= drivers/stm32/adc
 #MODULES		+= drivers/stm32/tone_alarm
 MODULES		+= drivers/led
-MODULES		+= drivers/px4io
+# MODULES		+= drivers/px4io
 MODULES		+= drivers/px4fmu
 MODULES		+= drivers/boards/sparky2
 MODULES		+= drivers/ardrone_interface
@@ -62,7 +62,7 @@ MODULES		+= systemcmds/ver
 MODULES		+= modules/commander
 MODULES		+= modules/navigator
 MODULES		+= modules/mavlink
-MODULES		+= modules/gpio_led
+# MODULES		+= modules/gpio_led
 MODULES 	+= modules/land_detector
 
 #
