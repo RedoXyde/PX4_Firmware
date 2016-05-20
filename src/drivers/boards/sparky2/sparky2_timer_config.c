@@ -45,55 +45,31 @@
 #include <stm32_gpio.h>
 #include <stm32_tim.h>
 
-#include <drivers/stm32/drv_pwm_servo.h>
 #include <drivers/drv_pwm_output.h>
+#include <drivers/stm32/drv_io_timer.h>
 
 #include "board_config.h"
 
-__EXPORT const struct pwm_servo_timer pwm_timers[PWM_SERVO_MAX_TIMERS] = {
+__EXPORT const io_timers_t io_timers[MAX_IO_TIMERS] = {
 	{
-		.base = STM32_TIM2_BASE,
+		.base = STM32_TIM1_BASE,
 		.clock_register = STM32_RCC_APB1ENR,
-		.clock_bit = RCC_APB1ENR_TIM2EN,
-		.clock_freq = STM32_APB1_TIM2_CLKIN
-	}
+		.clock_bit = RCC_APB2ENR_TIM1EN,
+		.clock_freq = STM32_APB2_TIM1_CLKIN,
+		.first_channel_index=0,
+		.last_channel_index=1,
+		.handler = io_timer_handler0,
+		.vectorno = STM32_IRQ_TIM1CC
+	},
 };
 
-__EXPORT const struct pwm_servo_channel pwm_channels[PWM_SERVO_MAX_CHANNELS] = {
+__EXPORT const timer_io_channels_t timer_io_channels[MAX_TIMER_IO_CHANNELS] = {
 	{
-		.gpio = GPIO_TIM3_CH3OUT,
-		.timer_index = 0,
-		.timer_channel = 3,
-		.default_value = 1000,
-	},
-	{
-		.gpio = GPIO_TIM3_CH4OUT,
-		.timer_index = 0,
-		.timer_channel = 4,
-		.default_value = 1000,
-	},
-	{
-		.gpio = GPIO_TIM9_CH2OUT,
+		.gpio_out = -1,//fixmeGPIO_TIM1_CH2OUT,
+		.gpio_in  = -1,//fixmeGPIO_TIM1_CH2IN,
 		.timer_index = 0,
 		.timer_channel = 2,
-		.default_value = 1000,
-	},
-	{
-		.gpio = GPIO_TIM2_CH3OUT,
-		.timer_index = 0,
-		.timer_channel = 3,
-		.default_value = 1000,
-	},
-	{
-		.gpio = GPIO_TIM5_CH2OUT,
-		.timer_index = 0,
-		.timer_channel = 2,
-		.default_value = 1000,
-	},
-	{
-		.gpio = GPIO_TIM5_CH1OUT,
-		.timer_index = 0,
-		.timer_channel = 1,
-		.default_value = 1000,
+		.ccr_offset = STM32_GTIM_CCR2_OFFSET,
+		.masks = GTIM_SR_CC2IF | GTIM_SR_CC2OF
 	},
 };
