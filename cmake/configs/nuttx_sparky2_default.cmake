@@ -70,14 +70,14 @@ set(config_module_list
 	modules/navigator
 	modules/mavlink
 	modules/gpio_led
-#	modules/uavcan  # Broken because libuavcan doesn't compile, missing std::abs and std::strtoull
+	modules/uavcan  # Broken because libuavcan doesn't compile, missing std::abs and std::strtoull
 	modules/land_detector
 
 	#
 	# Estimation modules (EKF/ SO3 / other filters)
 	#
 	# Too high RAM usage due to static allocations
-	# modules/attitude_estimator_ekf
+	#modules/attitude_estimator_ekf
 	modules/attitude_estimator_q
 	modules/ekf_att_pos_estimator
 	modules/position_estimator_inav
@@ -171,8 +171,8 @@ set(config_extra_builtin_cmds
 	)
 
 set(config_extra_libs
-#	uavcan
-#	uavcan_stm32_driver
+	uavcan
+	uavcan_stm32_driver
 	)
 
 set(config_io_extra_libs
