@@ -55,14 +55,14 @@ then
 	#
 	# Start system state indicator
 	#
-	if rgbled start
-	then
-	else
-		if blinkm start
-		then
-			blinkm systemstate
-		fi
-	fi
+	#if rgbled start
+	#then
+	#else
+	#	if blinkm start
+	#	then
+	#		blinkm systemstate
+	#	fi
+	#fi
 
 	# Currently unused, but might be useful down the road
 	#if pca8574 start
@@ -95,7 +95,7 @@ then
 	set MAV_TYPE none
 	set LOAD_DAPPS yes
 	set GPS yes
-	set GPS_FAKE no
+	set GPS_FAKE yes
 	set FAILSAFE none
 
 	#
