@@ -55,10 +55,18 @@ if(NOT ${BOARD} STREQUAL "sim")
 	endif()
 
 
+	if(NOT ${BOARD} STREQUAL "sparky2")
 	px4_nuttx_add_romfs(OUT romfs
 		ROOT ${romfs_dir}
 		EXTRAS ${extras}
 		)
+	else()
+  px4_nuttx_add_romfs(OUT romfs
+		ROOT ROMFS/sparky2
+		EXTRAS ${extras}
+		)
+	endif()
+
 	if (config_io_board)
 	    add_dependencies(romfs fw_io)
 	endif()

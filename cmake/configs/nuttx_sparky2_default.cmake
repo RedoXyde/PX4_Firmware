@@ -13,35 +13,35 @@ set(config_module_list
 	drivers/stm32/adc
 	drivers/stm32/tone_alarm
 	drivers/led
-	drivers/px4fmu
+#	drivers/px4fmu
 	drivers/boards/sparky2
 #	drivers/rgbled # Broken since PX4_I2C_BUS_LED not defined
-	drivers/mpu6000
+#	drivers/mpu6000
 	drivers/mpu9250
 #	drivers/hmc5883 # Breaks compilation, must be a missing define
 	drivers/ms5611
-	drivers/mb12xx
-	drivers/srf02
-	drivers/sf0x
-	drivers/ll40ls
-	drivers/trone
+#	drivers/mb12xx
+#	drivers/srf02
+#	drivers/sf0x
+#	drivers/ll40ls
+#	drivers/trone
 	drivers/gps
 	drivers/pwm_out_sim
-	drivers/hott
-	drivers/hott/hott_telemetry
-	drivers/hott/hott_sensors
-	drivers/blinkm
-	drivers/airspeed
-	drivers/ets_airspeed
-	drivers/meas_airspeed
-	drivers/frsky_telemetry
+#	drivers/hott
+#	drivers/hott/hott_telemetry
+#	drivers/hott/hott_sensors
+#	drivers/blinkm
+#	drivers/airspeed
+#	drivers/ets_airspeed
+#	drivers/meas_airspeed
+#	drivers/frsky_telemetry
 	modules/sensors
 	drivers/mkblctrl
-	drivers/px4flow
+#	drivers/px4flow
 #	drivers/oreoled # Broken since PX4_I2C_BUS_LED not defined
-	drivers/gimbal
+#	drivers/gimbal
 	drivers/pwm_input
-	drivers/camera_trigger
+#	drivers/camera_trigger
 	drivers/bst
 
 	#
@@ -96,7 +96,7 @@ set(config_module_list
 	#
 	# Logging
 	#
-	modules/sdlog2
+#	modules/sdlog2
 
 	#
 	# Library modules
@@ -134,12 +134,12 @@ set(config_module_list
 	#
 	# OBC challenge
 	#
-	modules/bottle_drop
+#	modules/bottle_drop
 
 	#
 	# Rover apps
 	#
-	examples/rover_steering_control
+#	examples/rover_steering_control
 
 	#
 	# Demo apps
@@ -147,7 +147,7 @@ set(config_module_list
 	#examples/math_demo
 	# Tutorial code from
 	# https://px4.io/dev/px4_simple_app
-	examples/px4_simple_app
+#	examples/px4_simple_app
 
 	# Tutorial code from
 	# https://px4.io/dev/daemon
@@ -181,11 +181,11 @@ set(config_io_extra_libs
 add_custom_target(sercon)
 set_target_properties(sercon PROPERTIES
 	PRIORITY "SCHED_PRIORITY_DEFAULT"
-	MAIN "sercon" 
+	MAIN "sercon"
 	STACK_MAIN "2048")
 
 add_custom_target(serdis)
 set_target_properties(serdis PROPERTIES
 	PRIORITY "SCHED_PRIORITY_DEFAULT"
-	MAIN "serdis" 
+	MAIN "serdis"
 	STACK_MAIN "2048")
