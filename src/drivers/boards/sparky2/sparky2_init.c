@@ -123,6 +123,11 @@ __END_DECLS
 
 __EXPORT void stm32_boardinitialize(void)
 {
+
+  uint32_t cr = getreg32(STM32_DBGMCU_CR);
+  cr |= DBGMCU_CR_STANDBY | DBGMCU_CR_STOP | DBGMCU_CR_SLEEP;
+  putreg32(cr, STM32_DBGMCU_CR);
+
 	/* configure SPI interfaces */
 	stm32_spiinitialize();
 
