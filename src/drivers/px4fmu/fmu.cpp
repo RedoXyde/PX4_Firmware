@@ -286,17 +286,6 @@ const PX4FMU::GPIOConfig PX4FMU::_gpio_tab[] = {
 	{GPIO_GPIO6_INPUT, GPIO_GPIO6_OUTPUT, GPIO_CAN2_TX_2},
 	{GPIO_GPIO7_INPUT, GPIO_GPIO7_OUTPUT, GPIO_CAN2_RX_2},
 #endif
-#if defined(CONFIG_ARCH_BOARD_SPARKY2)
-  // FIXME
-	{GPIO_GPIO0_INPUT, GPIO_GPIO0_OUTPUT, 0},
-	{GPIO_GPIO1_INPUT, GPIO_GPIO1_OUTPUT, 0},
-	{GPIO_GPIO2_INPUT, GPIO_GPIO2_OUTPUT, GPIO_USART2_CTS_1},
-	{GPIO_GPIO3_INPUT, GPIO_GPIO3_OUTPUT, GPIO_USART2_RTS_1},
-	{GPIO_GPIO4_INPUT, GPIO_GPIO4_OUTPUT, GPIO_USART2_TX_1},
-	{GPIO_GPIO5_INPUT, GPIO_GPIO5_OUTPUT, GPIO_USART2_RX_1},
-	{GPIO_GPIO6_INPUT, GPIO_GPIO6_OUTPUT, GPIO_CAN2_TX_2},
-	{GPIO_GPIO7_INPUT, GPIO_GPIO7_OUTPUT, GPIO_CAN2_RX_2},
-#endif
 #if defined(CONFIG_ARCH_BOARD_PX4FMU_V2)
 	{GPIO_GPIO0_INPUT,       GPIO_GPIO0_OUTPUT,       0},
 	{GPIO_GPIO1_INPUT,       GPIO_GPIO1_OUTPUT,       0},
@@ -352,6 +341,18 @@ const PX4FMU::GPIOConfig PX4FMU::_gpio_tab[] = {
 	{GPIO_GPIO11_INPUT,      GPIO_GPIO11_OUTPUT,       0},
 	{GPIO_GPIO12_INPUT,      GPIO_GPIO12_OUTPUT,       0},
 	{0,       0,       0},
+#endif
+#if defined(CONFIG_ARCH_BOARD_SPARKY2)
+	{GPIO_GPIO0_INPUT,       GPIO_GPIO0_OUTPUT,       0},
+	{GPIO_GPIO1_INPUT,       GPIO_GPIO1_OUTPUT,       0},
+	{GPIO_GPIO2_INPUT,       GPIO_GPIO2_OUTPUT,       0},
+	{GPIO_GPIO3_INPUT,       GPIO_GPIO3_OUTPUT,       0},
+	{GPIO_GPIO4_INPUT,       GPIO_GPIO4_OUTPUT,       0},
+	{GPIO_GPIO5_INPUT,       GPIO_GPIO5_OUTPUT,       0},
+	{0,                      GPIO_GPIO6_OUTPUT,       0},
+	{0,                      GPIO_GPIO7_OUTPUT,       0},
+	{0,                      GPIO_GPIO8_OUTPUT,       0},
+	{0,                      GPIO_GPIO9_OUTPUT,       0},
 #endif
 };
 
@@ -914,10 +915,12 @@ void PX4FMU::rc_io_invert(bool invert)
 {
 	INVERT_RC_INPUT(invert);
 
+#ifndef CONFIG_ARCH_BOARD_SPARKY2
 	if (!invert) {
 		// set FMU_RC_OUTPUT high to pull RC_INPUT up
 		stm32_gpiowrite(GPIO_RC_OUT, 1);
 	}
+#endif
 }
 #endif
 
@@ -1194,6 +1197,7 @@ PX4FMU::cycle()
 
 		update_pwm_rev_mask();
 
+#ifndef CONFIG_ARCH_BOARD_SPARKY2
 		int32_t dsm_bind_val;
 		param_t dsm_bind_param;
 
@@ -1205,6 +1209,7 @@ PX4FMU::cycle()
 			dsm_bind_val = -1;
 			param_set(dsm_bind_param, &dsm_bind_val);
 		}
+#endif
 	}
 
 	/* update ADC sampling */
@@ -1963,7 +1968,7 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 				break;
 
 #if defined(CONFIG_ARCH_BOARD_PX4FMU_V2) ||  defined(CONFIG_ARCH_BOARD_PX4FMU_V4) \
-	|| defined(CONFIG_ARCH_BOARD_MINDPX_V2)
+	|| defined(CONFIG_ARCH_BOARD_MINDPX_V2)	|| defined(CONFIG_ARCH_BOARD_SPARKY2)
 
 			case 6:
 				set_mode(MODE_6PWM);
@@ -2038,7 +2043,7 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 		}
 
 #ifdef RC_SERIAL_PORT
-
+#ifndef CONFIG_ARCH_BOARD_SPARKY2
 	case DSM_BIND_START:
 		/* only allow DSM2, DSM-X and DSM-X with more than 7 channels */
 		warnx("fmu pwm_ioctl: DSM_BIND_START, arg: %lu", arg);
@@ -2067,6 +2072,7 @@ PX4FMU::pwm_ioctl(file *filp, int cmd, unsigned long arg)
 		}
 
 		break;
+#endif
 #endif
 
 	case MIXERIOCRESET:
@@ -2423,6 +2429,15 @@ PX4FMU::sensor_reset(int ms)
 
 #endif
 #endif
+
+#if  defined(CONFIG_ARCH_BOARD_SPARKY2)
+  // FIXME
+	if (ms < 1) {
+		ms = 1;
+	}
+
+  /* Nothing for now... */
+#endif
 }
 
 void
@@ -2474,6 +2489,13 @@ PX4FMU::peripheral_reset(int ms)
 #endif
 #if defined(CONFIG_ARCH_BOARD_MINDPX_V2)
 
+	if (ms < 1) {
+		ms = 10;
+	}
+
+#endif
+#if defined(CONFIG_ARCH_BOARD_SPARKY2)
+  // FIXME
 	if (ms < 1) {
 		ms = 10;
 	}
@@ -2822,7 +2844,7 @@ fmu_new_mode(PortMode new_mode)
 		servo_mode = PX4FMU::MODE_4PWM;
 #endif
 #if defined(CONFIG_ARCH_BOARD_PX4FMU_V2) ||  defined(CONFIG_ARCH_BOARD_PX4FMU_V4) \
-	||  defined(CONFIG_ARCH_BOARD_MINDPX_V2)
+	||  defined(CONFIG_ARCH_BOARD_MINDPX_V2) ||  defined(CONFIG_ARCH_BOARD_SPARKY2)
 		servo_mode = PX4FMU::MODE_6PWM;
 #endif
 #if defined(CONFIG_ARCH_BOARD_AEROCORE)
@@ -2831,7 +2853,7 @@ fmu_new_mode(PortMode new_mode)
 		break;
 
 #if defined(CONFIG_ARCH_BOARD_PX4FMU_V2) ||  defined(CONFIG_ARCH_BOARD_PX4FMU_V4) \
-	|| defined(CONFIG_ARCH_BOARD_MINDPX_V2)
+	|| defined(CONFIG_ARCH_BOARD_MINDPX_V2)||  defined(CONFIG_ARCH_BOARD_SPARKY2)
 
 	case PORT_PWM4:
 		/* select 4-pin PWM mode */
@@ -3265,7 +3287,7 @@ fmu_main(int argc, char *argv[])
 		new_mode = PORT_FULL_PWM;
 
 #if defined(CONFIG_ARCH_BOARD_PX4FMU_V2) ||  defined(CONFIG_ARCH_BOARD_PX4FMU_V4) \
-	||  defined(CONFIG_ARCH_BOARD_MINDPX_V2)
+	||  defined(CONFIG_ARCH_BOARD_MINDPX_V2)||  defined(CONFIG_ARCH_BOARD_SPARKY2)
 
 	} else if (!strcmp(verb, "mode_pwm4")) {
 		new_mode = PORT_PWM4;
@@ -3357,7 +3379,7 @@ fmu_main(int argc, char *argv[])
 	fprintf(stderr,
 		"  mode_gpio, mode_serial, mode_pwm, mode_gpio_serial, mode_pwm_serial, mode_pwm_gpio, test, fake, sensor_reset, id\n");
 #elif defined(CONFIG_ARCH_BOARD_PX4FMU_V2) || defined(CONFIG_ARCH_BOARD_PX4FMU_V4) || defined(CONFIG_ARCH_BOARD_AEROCORE) \
-	|| defined(CONFIG_ARCH_BOARD_MINDPX_V2)
+	|| defined(CONFIG_ARCH_BOARD_MINDPX_V2)	|| defined(CONFIG_ARCH_BOARD_SPARKY2)
 	fprintf(stderr, "  mode_gpio, mode_pwm, mode_pwm4, test, sensor_reset [milliseconds], i2c <bus> <hz>\n");
 #endif
 	exit(1);
