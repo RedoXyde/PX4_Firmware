@@ -19,6 +19,8 @@ set TUNE_ERR ML<<CP4CP4CP4CP4CP4
 # set to /dev/null to get the NuttX shell through USB
 set LOG_FILE /dev/null
 
+tone_alarm start
+
 #
 # Start the ORB (first app to start)
 #
@@ -159,7 +161,8 @@ then
 	unset HIL
 else
 	unset HIL
-	gps start
+  # Fake GPS 'til futher notice
+	gps start -f
 fi
 
 # waypoint storage
@@ -438,7 +441,7 @@ unset OUTPUT_MODE
 #
 # Start the navigator
 #
-#navigator start
+navigator start
 
 #
 # Generic setup (autostart ID not found)
