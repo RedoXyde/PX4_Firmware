@@ -714,7 +714,11 @@ task_main(int argc, char *argv[])
 		/* File exists, check its size */
 		int file_size = lseek(g_task_fd, 0, SEEK_END);
 
+#ifndef CONFIG_ARCH_BOARD_SPARKY2
 		if ((file_size % k_sector_size) != 0) {
+#else
+    if (file_size < k_sector_size) {
+#endif
 			PX4_WARN("Incompatible data manager file %s, resetting it", k_data_manager_device_path);
 			PX4_WARN("Size: %u, sector size: %d", file_size, k_sector_size);
 			close(g_task_fd);
