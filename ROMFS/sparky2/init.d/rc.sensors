@@ -4,7 +4,8 @@ if adc start
 then
 fi
 
-if mpu9250 start -R ROTATION_PITCH_180
+# ROTATION_PITCH_180
+if mpu9250 -R 12 start
 then
 fi
 
