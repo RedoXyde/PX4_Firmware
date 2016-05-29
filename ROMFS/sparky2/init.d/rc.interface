@@ -9,11 +9,6 @@ then
 	# Load main mixer
 	#
 
-	if [ $MIXER_AUX == none -a $USE_IO == yes ]
-	then
-		set MIXER_AUX $MIXER.aux
-	fi
-
 	# Use the mixer file from ROMFS
 	set MIXER_FILE /etc/mixers/$MIXER.main.mix
 
@@ -80,90 +75,6 @@ then
 	if [ $FAILSAFE != none ]
 	then
 		pwm failsafe -d $OUTPUT_DEV $FAILSAFE
-	fi
-fi
-
-if [ $MIXER_AUX != none -a $AUX_MODE != none ]
-then
-	#
-	# Load aux mixer
-	#
-
-	set MIXER_AUX_FILE none
-	set OUTPUT_AUX_DEV /dev/pwm_output1
-
-	if [ -f /etc/mixers/$MIXER_AUX.aux.mix ]
-	then
-		set MIXER_AUX_FILE /etc/mixers/$MIXER_AUX.aux.mix
-	fi
-
-	if [ $MIXER_AUX_FILE != none ]
-	then
-		if fmu mode_$AUX_MODE
-		then
-			if [ -e $OUTPUT_AUX_DEV ]
-			then
-				if mixer load $OUTPUT_AUX_DEV $MIXER_AUX_FILE
-				then
-					echo "[i] Mixer: $MIXER_AUX_FILE on $OUTPUT_AUX_DEV"
-				else
-					echo "[i] Error loading mixer: $MIXER_AUX_FILE"
-					echo "ERROR: Could not load mixer: $MIXER_AUX_FILE" >> $LOG_FILE
-				fi
-			else
-				set PWM_AUX_OUT none
-				set FAILSAFE_AUX none
-			fi
-		else
-			echo "ERROR: Could not start: fmu mode_pwm" >> $LOG_FILE
-			tone_alarm $TUNE_ERR
-			set PWM_AUX_OUT none
-			set FAILSAFE_AUX none
-		fi
-
-		# Set min / max for aux out and rates
-		if [ $PWM_AUX_OUT != none ]
-		then
-			#
-			# Set PWM_AUX output frequency
-			#
-			if [ $PWM_AUX_RATE != none ]
-			then
-				pwm rate -c $PWM_AUX_OUT -r $PWM_AUX_RATE -d $OUTPUT_AUX_DEV
-			fi
-
-			if [ $PWM_AUX_MIN != none ]
-			then
-				pwm min -c $PWM_AUX_OUT -p $PWM_AUX_MIN -d $OUTPUT_AUX_DEV
-			fi
-			if [ $PWM_AUX_MAX != none ]
-			then
-				pwm max -c $PWM_AUX_OUT -p $PWM_AUX_MAX -d $OUTPUT_AUX_DEV
-			fi
-		fi
-
-		# Set disarmed values for aux out
-
-		# Transitional support until all configs
-		# are updated
-		if [ $PWM_ACHDIS == none ]
-		then
-			set PWM_ACHDIS ${PWM_AUX_OUT}
-		fi
-
-		#
-		# Set disarmed, min and max PWM_AUX values
-		#
-		if [ $PWM_AUX_DISARMED != none -a $PWM_ACHDIS != none ]
-		then
-			pwm disarmed -c $PWM_ACHDIS -p $PWM_AUX_DISARMED -d $OUTPUT_AUX_DEV
-		fi
-
-		if [ $FAILSAFE_AUX != none ]
-		then
-			pwm failsafe -d $OUTPUT_AUX_DEV $FAILSAFE
-		fi
-
 	fi
 fi
 
