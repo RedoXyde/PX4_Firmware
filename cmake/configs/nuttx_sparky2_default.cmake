@@ -15,10 +15,10 @@ set(config_module_list
 	drivers/led
 	drivers/px4fmu
 	drivers/boards/sparky2
-#	drivers/rgbled # Broken since PX4_I2C_BUS_LED not defined
+#	drivers/rgbled
 #	drivers/mpu6000
 	drivers/mpu9250
-#	drivers/hmc5883 # Breaks compilation, must be a missing define
+#	drivers/hmc5883
 	drivers/ms5611
 #	drivers/mb12xx
 #	drivers/srf02
@@ -26,7 +26,7 @@ set(config_module_list
 #	drivers/ll40ls
 #	drivers/trone
 	drivers/gps
-	drivers/pwm_out_sim
+#	drivers/pwm_out_sim
 #	drivers/hott
 #	drivers/hott/hott_telemetry
 #	drivers/hott/hott_sensors
@@ -36,12 +36,12 @@ set(config_module_list
 #	drivers/meas_airspeed
 #	drivers/frsky_telemetry
 	modules/sensors
-	drivers/mkblctrl
+#	drivers/mkblctrl
 #	drivers/px4flow
-#	drivers/oreoled # Broken since PX4_I2C_BUS_LED not defined
+#	drivers/oreoled
 #	drivers/gimbal
-	drivers/pwm_input
-#	drivers/camera_trigger
+#	drivers/pwm_input  # Requires some #define in board_config.h
+	drivers/camera_trigger
 	drivers/bst
 
 	#
@@ -87,7 +87,7 @@ set(config_module_list
 	# Vehicle Control
 	#
 	# modules/segway # XXX Needs GCC 4.7 fix
-	modules/fw_pos_control_l1
+#	modules/fw_pos_control_l1
 	modules/fw_att_control
 	modules/mc_att_control
 	modules/mc_pos_control
