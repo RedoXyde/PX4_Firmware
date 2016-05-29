@@ -413,7 +413,7 @@ protected:
 				_mavlink->send_message(MAVLINK_MSG_ID_STATUSTEXT, &msg);
 
 // TODO: the logging doesn't work on Snapdragon yet because of file paths.
-#ifndef __PX4_POSIX_EAGLE
+#if !defined(__PX4_POSIX_EAGLE) && !defined(CONFIG_ARCH_BOARD_SPARKY2)
 				/* write log messages in first instance to disk
 				 * timestamp each message with gps time
 				 */
