@@ -306,7 +306,9 @@ then
 fi
 if param compare SYS_COMPANION 157600
 then
-	mavlink start -d /dev/ttyS2 -b 57600 -m osd -r 1000
+	#mavlink start -d /dev/ttyS2 -b 57600 -m osd -r 1000
+  # Sparky2 debug: Use FlexiPort for nshterm (should be on /dev/ttyS0, MainPort)
+  nshterm /dev/ttyS2 &
 fi
 if param compare SYS_COMPANION 257600
 then

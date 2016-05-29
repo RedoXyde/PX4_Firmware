@@ -165,6 +165,7 @@ __EXPORT int nsh_archinitialize(void)
 	cpuload_initialize_once();
 #endif
 
+#if 0
 	/* set up the serial DMA polling */
 	static struct hrt_call serial_dma_call;
 	struct timespec ts;
@@ -181,6 +182,7 @@ __EXPORT int nsh_archinitialize(void)
 		       ts_to_abstime(&ts),
 		       (hrt_callout)stm32_serial_dma_poll,
 		       NULL);
+#endif
 
 	/* initial LED state */
 	drv_led_start();

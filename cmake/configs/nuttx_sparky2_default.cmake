@@ -13,7 +13,7 @@ set(config_module_list
 	drivers/stm32/adc
 	drivers/stm32/tone_alarm
 	drivers/led
-#	drivers/px4fmu
+	drivers/px4fmu
 	drivers/boards/sparky2
 #	drivers/rgbled # Broken since PX4_I2C_BUS_LED not defined
 #	drivers/mpu6000
@@ -70,7 +70,7 @@ set(config_module_list
 	modules/navigator
 	modules/mavlink
 	modules/gpio_led
-	modules/uavcan  # Broken because libuavcan doesn't compile, missing std::abs and std::strtoull
+	modules/uavcan
 	modules/land_detector
 
 	#
