@@ -60,31 +60,29 @@ __BEGIN_DECLS
 
 #define UDID_START		0x1FFF7A10
 
-#if defined(CONFIG_STM32_CAN1)
-#  warning "CAN1 is not supported on this board"
-#endif
-
 /* PX4FMU GPIOs ***********************************************************************************/
 /* LEDs */
 
-// PX4FMUv1_Blue_PB15 > Sparky2_Blue_PB5
+// Sparky2_Blue_PB5
 #define GPIO_LED1		(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN5)
-// PX4FMUv1_Amber_PB14 > Sparly2_Amber_PB4
+// Sparky2_Amber_PB4
 #define GPIO_LED2		(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN4)
+// Sparky2_???_PB6
+#define GPIO_LED3		(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN6)
 
 /* External interrupts */
+/* Not used anywhere in the code
 #define GPIO_EXTI_COMPASS	(GPIO_INPUT|GPIO_FLOAT|GPIO_EXTI|GPIO_PORTB|GPIO_PIN7)
-
-/* SPI chip selects */
+*/
 
 /* Sparky2, SPI1 - MPU9250 */
-#define GPIO_SPI_CS_IMU	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTC|GPIO_PIN4)
-
+/* SPI chip selects */
 /* SPI BUS for sensors: MPU9250, MS5611, L3GD20, HMC5883 LSM303D MPU6000
  * In this case, we're only interested in MPU9250, but whatever
  */
 #define PX4_SPI_BUS_SENSORS	1
-
+/* SPI Chip select for MPU9250 */
+#define GPIO_SPI_CS_IMU	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTC|GPIO_PIN4)
 /*
  * Use these in place of the spi_dev_e enumeration to
  * select a specific SPI device on SPI1
@@ -92,36 +90,36 @@ __BEGIN_DECLS
 #define PX4_SPIDEV_MPU		1
 
 /* Sparky2, SPI3 - Flash, RFM22B */
-#define GPIO_SPI_CS_FLASH	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN3)
-#define GPIO_SPI_CS_RADIO	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTA|GPIO_PIN15)
-/* SPI BUS for MTD */
+/* SPI Bus for MTD */
 #define PX4_SPI_BUS_MTD 3
-/* SPI BUS for RADIO */
+/* SPI Chip Select for MTD */
+#define GPIO_SPI_CS_FLASH	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTB|GPIO_PIN3)
+/* SPI Bus for RADIO */
 #define PX4_SPI_BUS_RADIO 3
+/* SPI Bus for RADIO */
+#define GPIO_SPI_CS_RADIO	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_50MHz|GPIO_OUTPUT_SET|GPIO_PORTA|GPIO_PIN15)
 
 /*
  * Use these in place of the spi_dev_e enumeration to
  * select a specific SPI device on SPI3
  *
- * FIXME: MPU9250 code uses PX4_SPIDEV_ name, MTD driver uses SPIDEV_ name...
- *        Update MTD driver to use PX4_ prefix would be better
+ * Note: Do not prepend SPIDEV_FLASH w/ PX4_. The #define is used by NuttX code.
  */
 #define PX4_SPIDEV_RADIO	1
 #define SPIDEV_FLASH      2
-
-
-/*
- * Optional devices on IO's external port
- */
 
 /*
  * I2C busses
  */
 
-/* Sparky2, FlexiPort CONN1, w/ Pressure Sensor */
+/* Sparky2 I2C1, FlexiPort CONN1 (bottom side of the board), and MS5611 */
 #define PX4_I2C_BUS_ONBOARD	1
-/* Sparky2, FlexiPort CONN3 */
-#define PX4_I2C_BUS_EXPANSION 2
+/* Sparky2 I2C2, FlexiPort CONN3 */
+//#define PX4_I2C_BUS_EXPANSION 2
+// Actually, let's keep CONN3 as USART and re-use the I2C on CONN1 instead
+#define PX4_I2C_BUS_EXPANSION 1
+// No I2C Led :/
+#define PX4_I2C_BUS_LED       1
 /*
  * Devices on the onboard bus.
  *
@@ -137,49 +135,48 @@ __BEGIN_DECLS
  *
  * These are the channel numbers of the ADCs of the microcontroller that can be used by the Px4 Firmware in the adc driver
  */
-#define ADC_CHANNELS (1 << 12) // FIXME
+#define ADC_CHANNELS (1 << 12) | (1 << 13)
 
 // ADC defines to be used in sensors.cpp to read from a particular channel
-#define ADC_BATTERY_VOLTAGE_CHANNEL   10
-#define ADC_BATTERY_CURRENT_CHANNEL   -1
-#define ADC_5V_RAIL_SENSE             -1
-#define ADC_AIRSPEED_VOLTAGE_CHANNEL  -1
+#define ADC_BATTERY_VOLTAGE_CHANNEL   13 /* PC3 */
+#define ADC_BATTERY_CURRENT_CHANNEL   12 /* PC2 */
+#define ADC_5V_RAIL_SENSE             0  /* Not in use, PA8 is not an ADC */
+#define ADC_AIRSPEED_VOLTAGE_CHANNEL  0  /* Not in use */
 
 /* User GPIOs
  *
- * GPIO0-4 are the buffered high-power GPIOs.
+ * GPIO0-5 are the PWM ouputs
  */
-#define GPIO_GPIO0_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN4)
-#define GPIO_GPIO1_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN5)
-#define GPIO_GPIO0_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN4)
-#define GPIO_GPIO1_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN5)
+#define GPIO_GPIO0_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTB|GPIO_PIN0)
+#define GPIO_GPIO0_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN0)
+#define GPIO_GPIO1_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTB|GPIO_PIN1)
+#define GPIO_GPIO1_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN1)
+#define GPIO_GPIO2_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN3)
+#define GPIO_GPIO2_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN3)
+#define GPIO_GPIO3_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN2)
+#define GPIO_GPIO3_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN2)
+#define GPIO_GPIO4_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN1)
+#define GPIO_GPIO4_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN1)
+#define GPIO_GPIO5_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN0)
+#define GPIO_GPIO5_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN0)
 
- /*
- * GPIO2-5 are the USART2 pins.
- * GPIO6-7 are the CAN2 pins.
+/*
+ * GPIO6-9 are the buffered high-power GPIOs.
  */
-#define GPIO_GPIO2_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN0)
-#define GPIO_GPIO3_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN1)
-#define GPIO_GPIO4_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN2)
-#define GPIO_GPIO5_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTA|GPIO_PIN3)
-#define GPIO_GPIO6_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTB|GPIO_PIN13)
-#define GPIO_GPIO7_INPUT	(GPIO_INPUT|GPIO_PULLUP|GPIO_PORTB|GPIO_PIN2)
-#define GPIO_GPIO2_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN0)
-#define GPIO_GPIO3_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN1)
-#define GPIO_GPIO4_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN2)
-#define GPIO_GPIO5_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTA|GPIO_PIN3)
-#define GPIO_GPIO6_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN13)
-#define GPIO_GPIO7_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN12)
-#define GPIO_GPIO_DIR		(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN13)
+#define GPIO_GPIO6_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN14)
+#define GPIO_GPIO7_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN15)
+#define GPIO_GPIO9_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN8)
+#define GPIO_GPIO8_OUTPUT	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN9)
 
 /*
  * Tone alarm output
- * TODO FIXME
+ * FIXME Check Timer and Channel, so it doesn't conflict with any other periph
+ * FIXME Fix the GPIO. Currently assigned to an unrouted pin
  */
 #define TONE_ALARM_TIMER	4	/* timer 11 */
 #define TONE_ALARM_CHANNEL	3	/* channel 3 */
-#define GPIO_TONE_ALARM_IDLE	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTB|GPIO_PIN14)
-#define GPIO_TONE_ALARM		(GPIO_ALT|GPIO_AF2|GPIO_SPEED_2MHz|GPIO_FLOAT|GPIO_PUSHPULL|GPIO_PORTB|GPIO_PIN14)
+#define GPIO_TONE_ALARM_IDLE	(GPIO_OUTPUT|GPIO_PUSHPULL|GPIO_SPEED_2MHz|GPIO_OUTPUT_CLEAR|GPIO_PORTC|GPIO_PIN1)
+#define GPIO_TONE_ALARM		(GPIO_ALT|GPIO_AF2|GPIO_SPEED_2MHz|GPIO_FLOAT|GPIO_PUSHPULL|GPIO_PORTC|GPIO_PIN1)
 
 /*
  * PWM
@@ -227,19 +224,52 @@ __BEGIN_DECLS
  * High-resolution timer
  * Note: Don't use "complementary" channels (such as ch1 & ch2) for HRT and PPM
  *       it just doesn't work (see note in src/drivers/stm32/drv_hrt.c)
+ * Note: Don't use TIM1 or TIM8, they're "advanced" timers. I tried with TIM1
+ *       and the systicks went crazy
+ *
+ * FIXME: Check the Timer and Channel are not conflicting with another periph
  */
-#define HRT_TIMER		1	/* use timer1 for the HRT */
-#define HRT_TIMER_CHANNEL	4	/* use capture/compare channel */
+#define HRT_TIMER		3       /* use timer3 for the HRT */
+#define HRT_TIMER_CHANNEL	4	/* use capture/compare channel 4 */
 
-/* FIXME Assume SBUS and PPM use the same input, PC7 */
+/*
+ * PPM Input channel and pin
+ * Uses the same Timer as HRT, but a different channel
+ *
+ * FIXME: Currently assuming SBUS and PPM can use the same input, PC7, might not
+ *        be possible
+ * FIXME: Check the Channel is not conflicting with another peripheral
+ */
 #define HRT_PPM_CHANNEL		2	/* use capture/compare channel 2 */
-#define GPIO_PPM_IN		(GPIO_ALT|GPIO_AF1|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN7)
+#define GPIO_PPM_IN       (GPIO_ALT|GPIO_AF1|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN7)
 
-/* FIXME ! */
+/*
+ * Serial port for RC input: USART6 => /dev/ttyS5
+ *
+ * Setting this option disables CPPM input in the fmu module
+ */
+#define RC_SERIAL_PORT		"/dev/ttyS5"
+
+/*
+ * SBUS I/O enabling SBUS inversion, PC6
+ *
+ * Note: The schematic also shows PC0 as SBUS Invert. Must be a mistake since
+ *       it's not wired
+ */
+#define GPIO_SBUS_INV (GPIO_ALT|GPIO_AF1|GPIO_PULLUP|GPIO_PORTC|GPIO_PIN6)
+#define INVERT_RC_INPUT(_s)		stm32_gpiowrite(GPIO_SBUS_INV, _s);
+
+
+/*
+ * PWM Input settings
+ *
+ * Currently disabled since it's not used and there's no dedicated pin
+ */
+/*
 #define PWMIN_TIMER		2
 #define PWMIN_TIMER_CHANNEL	2
 #define GPIO_PWM_IN		GPIO_TIM4_CH2IN_2
-
+*/
 /****************************************************************************************************
  * Public Types
  ****************************************************************************************************/

@@ -217,8 +217,8 @@
 #define GPIO_USART3_TX	GPIO_USART3_TX_1
 
 /* USART4: Sparky2, PWM/Servo Port: RX (PA1), TX (PA0) */
-#define GPIO_UART4_RX	GPIO_UART4_RX_1
-#define GPIO_UART4_TX	GPIO_UART4_TX_1
+//#define GPIO_UART4_RX	GPIO_UART4_RX_1
+//#define GPIO_UART4_TX	GPIO_UART4_TX_1
 
 /* USART5: Disable (conflicts with SPI3 bus) */
 
